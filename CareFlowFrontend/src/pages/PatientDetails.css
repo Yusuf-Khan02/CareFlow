@@ -1,239 +1,303 @@
+/* ==========================================================================
+   CareFlow Smart Hospital Operations — Patient Details Clinical Workspace
+   ========================================================================== */
+
 .patient-details-page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
+  animation: fadeIn 0.25s ease-out;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Top Action Bar
+   -------------------------------------------------------------------------- */
 .details-top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 14px;
 }
 
 .back-nav-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 13.5px;
   font-weight: 600;
   color: var(--primary-color);
-  padding: 8px 14px;
+  padding: 9px 16px;
   border-radius: var(--radius-md);
   background-color: var(--surface-color);
   border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-xs);
+  cursor: pointer;
   transition: all var(--transition-fast);
 }
 
 .back-nav-btn:hover {
   background-color: var(--surface-hover);
   border-color: var(--primary-color);
+  transform: translateX(-2px);
 }
 
 .details-header-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .action-btn-outline {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 8px;
+  padding: 9px 18px;
   border-radius: var(--radius-md);
   background-color: var(--surface-color);
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
   font-size: 13px;
   font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-xs);
   transition: all var(--transition-fast);
 }
 
 .action-btn-outline:hover {
   background-color: var(--surface-hover);
   color: var(--text-primary);
+  border-color: #cbd5e1;
 }
 
 .action-btn-primary {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 8px;
+  padding: 9px 20px;
   border-radius: var(--radius-md);
   background: var(--accent-gradient);
   color: #ffffff;
   font-size: 13px;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(15, 118, 110, 0.28);
   transition: all var(--transition-fast);
 }
 
-.action-btn-primary:hover {
+.action-btn-primary:hover:not(:disabled) {
   background: var(--accent-gradient-hover);
-  box-shadow: 0 6px 16px rgba(15, 118, 110, 0.35);
+  box-shadow: 0 6px 18px rgba(15, 118, 110, 0.38);
+  transform: translateY(-1px);
 }
 
-/* Patient Hero Card */
+.action-btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   Patient Hero Card
+   -------------------------------------------------------------------------- */
 .patient-hero-card {
   background-color: var(--surface-color);
   border-radius: var(--radius-xl);
-  padding: 24px 28px;
+  padding: 26px 30px;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
 }
 
 .patient-hero-avatar {
-  width: 64px;
-  height: 64px;
+  width: 68px;
+  height: 68px;
   border-radius: var(--radius-full);
   background: var(--accent-gradient);
   color: #ffffff;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 6px 16px rgba(15, 118, 110, 0.3);
+  box-shadow: 0 8px 20px rgba(15, 118, 110, 0.32);
 }
 
 .patient-hero-info {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   flex: 1;
 }
 
 .patient-hero-title-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
 .patient-hero-name {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 800;
   color: var(--text-primary);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
+  margin: 0;
 }
 
 .patient-hero-mrn {
   font-size: 12px;
   font-weight: 700;
-  font-family: monospace;
-  padding: 3px 8px;
-  border-radius: var(--radius-xs);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
   background-color: var(--surface-hover);
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
+  letter-spacing: 0.04em;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}
+
+.status-pill .status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+}
+
+.status-pill.status-active {
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+.status-pill.status-active .status-dot {
+  background-color: #10b981;
+}
+
+.status-pill.status-critical {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+.status-pill.status-critical .status-dot {
+  background-color: #ef4444;
+}
+
+.status-pill.status-discharged {
+  background-color: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+}
+.status-pill.status-discharged .status-dot {
+  background-color: #94a3b8;
 }
 
 .patient-hero-meta-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   font-size: 13.5px;
   color: var(--text-secondary);
   flex-wrap: wrap;
 }
 
-.blood-tag {
-  color: var(--danger-color);
-  font-weight: 700;
-}
-
-/* Vitals Grid */
-.vitals-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-
-.vital-card {
-  background-color: var(--surface-color);
-  border-radius: var(--radius-lg);
-  padding: 16px 20px;
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-xs);
-  display: flex;
-  flex-direction: column;
-}
-
-.vital-label {
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-}
-
-.vital-value-row {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  margin: 6px 0 2px;
-}
-
-.vital-value {
-  font-size: 22px;
-  font-weight: 800;
+.patient-hero-meta-row span strong {
   color: var(--text-primary);
-}
-
-.vital-unit {
-  font-size: 12px;
-  color: var(--text-secondary);
   font-weight: 600;
 }
 
-.vital-sub {
-  font-size: 11.5px;
-  color: var(--text-muted);
+.blood-tag {
+  color: #dc2626;
+  font-weight: 800;
+  background-color: #fef2f2;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid #fecaca;
+  margin-left: 2px;
 }
 
-/* Tabs Bar */
-.details-tabs-bar {
-  display: flex;
-  gap: 8px;
-  border-bottom: 2px solid var(--border-color);
-  padding-bottom: 2px;
+/* --------------------------------------------------------------------------
+   Subnavigation Segmented Tabs Bar
+   -------------------------------------------------------------------------- */
+.patient-details-tabs {
+  display: inline-flex;
+  background-color: #e2e8f0;
+  padding: 4px;
+  border-radius: var(--radius-lg);
+  gap: 6px;
+  width: fit-content;
+  border: 1px solid #cbd5e1;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
-.details-tab {
-  padding: 10px 18px;
+.details-tab-btn {
+  padding: 9px 20px;
   font-size: 13.5px;
   font-weight: 600;
-  color: var(--text-secondary);
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: #475569;
+  cursor: pointer;
   transition: all var(--transition-fast);
+  white-space: nowrap;
 }
 
-.details-tab:hover {
+.details-tab-btn:hover:not(.active) {
   color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
-.details-tab.active {
+.details-tab-btn.active {
+  background-color: #ffffff;
   color: var(--primary-color);
-  border-bottom-color: var(--primary-color);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
 
-/* Tab Pane Grid */
-.tab-pane-grid {
+/* --------------------------------------------------------------------------
+   Overview Layout Grid
+   -------------------------------------------------------------------------- */
+.details-overview-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
 
+/* First box (Vitals) spans full 2 columns across the top */
+.details-overview-grid > .details-info-box:first-child {
+  grid-column: 1 / -1;
+}
+
+/* --------------------------------------------------------------------------
+   Common Info Box Cards
+   -------------------------------------------------------------------------- */
 .details-info-box {
   background-color: var(--surface-color);
   border-radius: var(--radius-xl);
-  padding: 24px;
+  padding: 24px 28px;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
   display: flex;
@@ -241,160 +305,286 @@
   gap: 16px;
 }
 
-.box-section-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-primary);
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 12px;
-}
-
-.info-key-val-list {
+.box-header-row {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.info-kv-row {
-  display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
-  font-size: 13.5px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 14px;
 }
 
-.kv-key {
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
-.kv-val {
+.box-section-title {
+  font-size: 16px;
+  font-weight: 700;
   color: var(--text-primary);
-  font-weight: 600;
-  text-align: right;
-  max-width: 60%;
-}
-
-.font-semibold {
-  font-weight: 700;
-}
-
-.allergies-box-wrapper {
-  margin-top: 12px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border-color);
-}
-
-.allergies-header {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-  display: block;
-  margin-bottom: 10px;
-}
-
-.allergies-tags-list {
+  margin: 0;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
 }
 
-.allergy-chip {
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
+.vitals-timestamp {
   font-size: 12px;
   font-weight: 600;
+  color: var(--primary-color);
+  background-color: var(--primary-50);
+  border: 1px solid var(--primary-200);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
 }
 
-.chip-warning {
-  background-color: var(--warning-bg);
-  color: var(--warning-color);
-  border: 1px solid var(--warning-border);
+/* --------------------------------------------------------------------------
+   Vitals Display Row (4 Cards)
+   -------------------------------------------------------------------------- */
+.vitals-display-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 4px;
 }
 
-.chip-safe {
-  background-color: var(--success-bg);
-  color: var(--success-color);
-  border: 1px solid var(--success-border);
+.vital-item-card {
+  background-color: #f8fafc;
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  transition: all var(--transition-fast);
 }
 
-/* Visits Timeline */
+.vital-item-card:hover {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+
+.vital-item-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.vital-item-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin: 2px 0;
+}
+
+.vital-item-val small {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.vital-item-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  width: fit-content;
+}
+
+.vital-item-status.status-normal {
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+/* --------------------------------------------------------------------------
+   Details Field List (Structured Key-Value Rows)
+   -------------------------------------------------------------------------- */
+.details-field-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.details-field-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 16px;
+  background-color: #f8fafc;
+  border-radius: var(--radius-md);
+  border: 1px solid #f1f5f9;
+  transition: background-color var(--transition-fast);
+}
+
+.details-field-item:hover {
+  background-color: #f1f5f9;
+}
+
+.field-lbl {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.field-val {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: right;
+  max-width: 65%;
+  word-break: break-word;
+}
+
+/* --------------------------------------------------------------------------
+   Allergies Tag List
+   -------------------------------------------------------------------------- */
+.allergies-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.allergy-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+}
+
+.no-allergies {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   Consultations & Encounters Timeline (Tab 2)
+   -------------------------------------------------------------------------- */
 .visits-timeline {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
-.visit-entry-card {
-  padding: 18px;
-  background-color: var(--surface-hover);
+.visit-timeline-entry {
+  background-color: #f8fafc;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--border-color);
+  border: 1px solid #e2e8f0;
+  padding: 20px 24px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .visit-entry-header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 10px;
 }
 
-.visit-entry-doctor {
-  font-size: 15px;
+.visit-date {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--primary-color);
+  background-color: #f0fdfa;
+  border: 1px solid #ccfbf1;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.visit-doc {
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--text-primary);
 }
 
-.visit-entry-dept {
-  font-size: 12px;
-  color: var(--text-muted);
+.visit-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
 
-.visit-entry-date {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--primary-color);
-  background-color: var(--primary-light);
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
+.visit-detail-grid > div strong {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-bottom: 4px;
 }
 
-.visit-body-section {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.visit-detail-grid > div p {
   font-size: 13.5px;
   line-height: 1.5;
   color: var(--text-primary);
+  margin: 0;
 }
 
-.visit-notes {
-  color: var(--text-secondary);
-  font-size: 13px;
-  background-color: var(--surface-color);
-  padding: 8px 12px;
+.visit-notes-box {
+  grid-column: 1 / -1;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid var(--primary-color);
   border-radius: var(--radius-sm);
-  border: 1px dashed var(--border-color);
-  margin-top: 4px;
+  padding: 12px 16px;
 }
 
-/* Appointments Grid */
+.visit-notes-box strong {
+  color: var(--primary-color) !important;
+}
+
+.visit-notes-box p {
+  color: #334155 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Appointments List Grid (Tab 3)
+   -------------------------------------------------------------------------- */
 .appointments-list-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 16px;
 }
 
 .apt-item-card {
-  padding: 16px;
-  background-color: var(--surface-hover);
+  padding: 18px 20px;
+  background-color: #f8fafc;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--border-color);
+  border: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  transition: all var(--transition-fast);
+}
+
+.apt-item-card:hover {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
 }
 
 .apt-item-top {
@@ -406,44 +596,82 @@
 .apt-type-badge {
   font-size: 11px;
   font-weight: 700;
-  padding: 2px 8px;
+  padding: 3px 8px;
   border-radius: var(--radius-xs);
   background-color: var(--primary-light);
   color: var(--primary-color);
 }
 
 .apt-doctor {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text-primary);
+  margin: 2px 0 0;
 }
 
 .apt-dept {
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--text-secondary);
 }
 
 .apt-time-row {
   display: flex;
-  gap: 14px;
-  font-size: 12px;
-  color: var(--text-muted);
+  gap: 16px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
   font-weight: 500;
-  margin-top: 4px;
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed #e2e8f0;
 }
 
-@media (max-width: 900px) {
-  .vitals-grid {
+/* --------------------------------------------------------------------------
+   Responsive Media Queries
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .vitals-display-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .tab-pane-grid {
+  .visit-detail-grid {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 600px) {
-  .vitals-grid {
+@media (max-width: 800px) {
+  .details-overview-grid {
     grid-template-columns: 1fr;
+  }
+
+  .patient-hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .patient-details-tabs {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .details-tab-btn {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+@media (max-width: 540px) {
+  .vitals-display-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .details-field-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .field-val {
+    text-align: left;
+    max-width: 100%;
   }
 }

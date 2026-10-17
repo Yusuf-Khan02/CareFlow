@@ -32,3 +32,9 @@ Thumbs.db
 *.db-journal
 *.sqlite
 *.sqlite3
+*.bak
+
+# Backups and Local Runtime Storage
+backups/
+server/storage/private/*
+!server/storage/private/.gitkeep

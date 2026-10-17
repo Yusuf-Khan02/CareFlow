@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -20,21 +21,43 @@ async function main() {
 
   console.log(`✅ Organization created: ${org.name}`);
 
-  // 2. Create Demo Admin User
-  const adminUser = await prisma.user.upsert({
-    where: { email: "admin@careflow.demo" },
-    update: {},
-    create: {
-      email: "admin@careflow.demo",
-      passwordHash: "demo_hash_careflow_2026",
-      name: "Dr. Alexander Davis",
-      role: "Admin",
-      status: "Active",
-      organizationId: org.id,
-    },
-  });
+  // 2. Create Demo Role Users (Hashed with bcrypt: "CareFlow@2026")
+  const defaultPasswordHash = await bcrypt.hash("CareFlow@2026", 10);
 
-  console.log(`✅ Admin user created: ${adminUser.email}`);
+  const demoUsers = [
+    { email: "admin@careflow.demo", name: "Dr. Alexander Davis", role: "Admin" },
+    { email: "dr.sharma@careflow.demo", name: "Dr. Rahul Sharma", role: "Doctor" },
+    { email: "nurse.patel@careflow.demo", name: "Sister Priya Patel", role: "Nurse" },
+    { email: "reception@careflow.demo", name: "Ananya Roy", role: "Receptionist" },
+    { email: "lab@careflow.demo", name: "Vikram Sen", role: "LabTech" },
+    { email: "pharmacy@careflow.demo", name: "Sunil Joshi", role: "Pharmacist" },
+    { email: "patient@careflow.demo", name: "Rahul Sharma", role: "Patient" },
+  ];
+
+  const createdUsers: Record<string, string> = {};
+
+  for (const u of demoUsers) {
+    const user = await prisma.user.upsert({
+      where: { email: u.email },
+      update: {
+        passwordHash: defaultPasswordHash,
+        role: u.role,
+        name: u.name,
+        status: "Active",
+      },
+      create: {
+        email: u.email,
+        passwordHash: defaultPasswordHash,
+        name: u.name,
+        role: u.role,
+        status: "Active",
+        organizationId: org.id,
+      },
+    });
+    createdUsers[u.email] = user.id;
+  }
+
+  console.log("✅ 7 Demo Role Users seeded with secure bcrypt hashing (Password: CareFlow@2026).");
 
   // 3. Create Hospital Departments
   const deptData = [
@@ -165,8 +188,11 @@ async function main() {
     const departmentId = createdDepts[doc.deptName];
     const createdDoc = await prisma.doctor.upsert({
       where: { email: doc.email },
-      update: {},
+      update: {
+        userId: createdUsers[doc.email] || undefined,
+      },
       create: {
+        userId: createdUsers[doc.email] || null,
         name: doc.name,
         title: doc.title,
         qualification: doc.qualification,

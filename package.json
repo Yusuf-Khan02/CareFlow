@@ -8,7 +8,11 @@
     "build:server": "npm run build --prefix server",
     "db:studio": "npm run db:studio --prefix server",
     "db:push": "npm run db:push --prefix server",
-    "db:seed": "npm run db:seed --prefix server"
+    "db:seed": "npm run db:seed --prefix server",
+    "db:backup": "powershell -ExecutionPolicy Bypass -File scripts/backup-database.ps1",
+    "test:smoke": "node scripts/smoke-test.mjs",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down"
   },
   "dependencies": {
     "nodemon": "^3.1.14"

@@ -1,0 +1,464 @@
+.reports-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Page Header */
+.reports-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.reports-title {
+  margin: 0;
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #f8fafc;
+  letter-spacing: -0.02em;
+}
+
+.reports-subtitle {
+  margin: 0;
+  font-size: 0.925rem;
+  color: #94a3b8;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.report-filter-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0 0.85rem;
+}
+
+.report-filter-pill select {
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0.6rem 0;
+  font-size: 0.85rem;
+  color: #f8fafc;
+  cursor: pointer;
+}
+
+.reports-export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.15rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  transition: all 0.2s;
+}
+
+.reports-export-btn:hover {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+  transform: translateY(-1px);
+}
+
+/* Turnaround Grid */
+.turnaround-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.turnaround-card {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.turnaround-card:hover {
+  transform: translateY(-2px);
+}
+
+.turnaround-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-teal {
+  background: rgba(20, 184, 166, 0.15);
+  color: #2dd4bf;
+  border: 1px solid rgba(20, 184, 166, 0.3);
+}
+
+.icon-indigo {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.icon-cyan {
+  background: rgba(6, 182, 212, 0.15);
+  color: #22d3ee;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.icon-emerald {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.turnaround-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.turnaround-label {
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.turnaround-stat-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.turnaround-val {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.turnaround-unit {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.turnaround-badge {
+  display: inline-block;
+  font-size: 0.725rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  width: fit-content;
+}
+
+.badge-green {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+}
+
+.badge-blue {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+}
+
+/* Charts Rows */
+.reports-charts-row {
+  display: grid;
+  grid-template-columns: 1.7fr 1.2fr;
+  gap: 1.25rem;
+}
+
+.report-card {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.report-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.report-card-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.report-card-sub {
+  margin: 0.2rem 0 0;
+  font-size: 0.825rem;
+  color: #94a3b8;
+}
+
+.chart-legend-chips {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.legend-chip {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+}
+
+.legend-chip.invoiced {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border-left: 3px solid #3b82f6;
+}
+
+.legend-chip.collected {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border-left: 3px solid #10b981;
+}
+
+.chart-canvas-wrapper {
+  margin-top: 0.25rem;
+}
+
+/* Category Split (Pie + Legend) */
+.category-chart-split {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pie-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.category-legend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cat-legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.825rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.cat-legend-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cat-color-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cat-name {
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.cat-legend-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cat-amount {
+  font-weight: 700;
+  color: #f1f5f9;
+  font-family: monospace;
+}
+
+.cat-pct {
+  font-size: 0.775rem;
+  color: #94a3b8;
+  min-width: 38px;
+  text-align: right;
+}
+
+/* Bottom Grid */
+.reports-bottom-grid {
+  display: grid;
+  grid-template-columns: 1.8fr 1.1fr;
+  gap: 1.25rem;
+}
+
+.dept-table-wrapper {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dept-report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.dept-report-table th {
+  background: rgba(15, 23, 42, 0.6);
+  padding: 0.75rem 0.95rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dept-report-table td {
+  padding: 0.85rem 0.95rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #f1f5f9;
+  vertical-align: middle;
+}
+
+.dept-cell-name {
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.dept-cell-code {
+  font-size: 0.75rem;
+  color: #60a5fa;
+}
+
+.workload-bar-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.workload-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  border-radius: 9999px;
+}
+
+/* Payment Methods List */
+.pay-methods-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pay-method-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+
+.pay-method-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.pay-method-name {
+  font-weight: 700;
+  color: #f8fafc;
+  font-size: 0.9rem;
+}
+
+.pay-method-count {
+  font-size: 0.775rem;
+  color: #94a3b8;
+}
+
+.pay-method-total {
+  font-size: 1.05rem;
+}
+
+.financials-summary-box {
+  margin-top: 0.5rem;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.fin-sum-row {
+  display: flex;
+  justify-content: space-between;
+  color: #cbd5e1;
+}
+
+@media (max-width: 1024px) {
+  .turnaround-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .reports-charts-row,
+  .reports-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .turnaround-grid {
+    grid-template-columns: 1fr;
+  }
+  .reports-page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .header-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

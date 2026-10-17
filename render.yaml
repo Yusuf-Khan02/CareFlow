@@ -1,0 +1,48 @@
+# ==============================================================================
+# CareFlow Smart Hospital Operations Platform - Render.com Blueprint
+# Deploys: Backend API Web Service, Frontend Static Site, and Managed Redis
+# ==============================================================================
+
+services:
+  # 1. CareFlow Express + Socket.IO Backend API
+  - type: web
+    name: careflow-api
+    env: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install --include=dev && npx prisma generate && npx prisma db push && npx prisma db seed && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        value: file:./prod.db
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: https://careflow-web.onrender.com
+      - key: AUTO_SEED
+        value: "true"
+
+  # 2. CareFlow React SPA Frontend
+  - type: web
+    name: careflow-web
+    env: static
+    plan: free
+    rootDir: CareFlowFrontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://careflow-api.onrender.com/api/v1
+      - key: VITE_SOCKET_URL
+        value: https://careflow-api.onrender.com

@@ -1,16 +1,29 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Doctor, DoctorStatus } from "../types";
-import { getStoredDoctors } from "../data/mockData";
+import { useQuery } from "@tanstack/react-query";
+import type { DoctorStatus } from "../types";
+import { doctorService } from "../services";
+import { Spinner, ErrorState, EmptyState } from "../components/common";
 import "./Doctors.css";
 
 export const Doctors = () => {
   const navigate = useNavigate();
-  const [doctors] = useState<Doctor[]>(() => getStoredDoctors());
 
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("");
   const [status, setStatus] = useState<string>("");
+
+  const {
+    data: doctors = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isFetching,
+  } = useQuery({
+    queryKey: ["doctors", { search, department, status }],
+    queryFn: () => doctorService.getDoctors({ search, department, status }),
+  });
 
   const filteredDoctors = useMemo(() => {
     return doctors.filter((doc) => {
@@ -40,7 +53,25 @@ export const Doctors = () => {
       {/* Page Header */}
       <div className="doctors-header">
         <div>
-          <h1 className="doctors-title">Medical Staff & Specialists Directory</h1>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <h1 className="doctors-title">Medical Staff & Specialists Directory</h1>
+            {isFetching && (
+              <span
+                style={{
+                  fontSize: "12px",
+                  color: "var(--color-primary)",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  background: "rgba(14, 165, 233, 0.1)",
+                  padding: "2px 8px",
+                  borderRadius: "12px",
+                }}
+              >
+                ● Syncing Staff DB...
+              </span>
+            )}
+          </div>
           <p className="doctors-subtitle">
             Browse attending physicians, clinical credentials, daily duty statuses, and consultation schedules.
           </p>
@@ -139,14 +170,32 @@ export const Doctors = () => {
         </div>
       </div>
 
-      {/* Doctors Grid */}
-      <div className="doctors-cards-grid">
-        {filteredDoctors.length === 0 ? (
-          <div className="no-doctors-card">
-            <p>No clinicians found matching your criteria.</p>
-          </div>
-        ) : (
-          filteredDoctors.map((doc) => (
+      {/* Content State: Loading, Error, Empty, or Cards Grid */}
+      {isLoading ? (
+        <div style={{ padding: "80px 0", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+          <Spinner size="lg" color="primary" />
+          <p style={{ color: "var(--color-text-secondary)", fontSize: "14px" }}>Loading clinicians from SQL database...</p>
+        </div>
+      ) : isError ? (
+        <ErrorState
+          title="Failed to Load Clinicians"
+          message={error?.message || "Could not retrieve doctor directory from API."}
+          onRetry={() => refetch()}
+        />
+      ) : filteredDoctors.length === 0 ? (
+        <EmptyState
+          title="No Clinicians Found"
+          description="No physicians match your search criteria. Try modifying your search or filters."
+          actionText="Reset Filters"
+          onAction={() => {
+            setSearch("");
+            setDepartment("");
+            setStatus("");
+          }}
+        />
+      ) : (
+        <div className="doctors-cards-grid">
+          {filteredDoctors.map((doc) => (
             <div
               key={doc.id}
               className="doctor-card animate-fade-in"
@@ -197,9 +246,9 @@ export const Doctors = () => {
                 </button>
               </div>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

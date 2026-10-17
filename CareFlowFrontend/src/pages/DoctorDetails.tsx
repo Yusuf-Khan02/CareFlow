@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import type { Doctor } from "../types";
-import { getStoredDoctors } from "../data/mockData";
-import { useToast, EmptyState } from "../components/common";
+import { useQuery } from "@tanstack/react-query";
+import { doctorService } from "../services";
+import { useToast, EmptyState, ErrorState, PageLoader } from "../components/common";
 import "./DoctorDetails.css";
 
 export const DoctorDetails = () => {
@@ -10,16 +10,21 @@ export const DoctorDetails = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
-  const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [selectedDay, setSelectedDay] = useState<string>("Monday");
 
-  useEffect(() => {
-    const list = getStoredDoctors();
-    const found = list.find((d) => d.id === Number(id));
-    setDoctor(found || null);
-  }, [id]);
+  const {
+    data: doctor,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["doctor", Number(id)],
+    queryFn: () => doctorService.getDoctorById(Number(id)),
+    enabled: !!id && !isNaN(Number(id)),
+  });
 
-  if (!doctor) {
+  if (isLoading) {
     return (
       <div className="doctor-details-page">
         <button
@@ -29,12 +34,35 @@ export const DoctorDetails = () => {
         >
           ← Back to Staff Directory
         </button>
-        <EmptyState
-          title={`Physician #${id} Not Found`}
-          description="The requested staff profile does not exist in the active clinical directory."
-          actionText="Return to Doctors Directory"
-          onAction={() => navigate("/doctors")}
-        />
+        <PageLoader message={`Loading physician profile #${id} from SQL database...`} />
+      </div>
+    );
+  }
+
+  if (isError || !doctor) {
+    return (
+      <div className="doctor-details-page">
+        <button
+          type="button"
+          className="back-nav-btn"
+          onClick={() => navigate("/doctors")}
+        >
+          ← Back to Staff Directory
+        </button>
+        {isError ? (
+          <ErrorState
+            title="Failed to Load Physician Profile"
+            message={error?.message || `Could not fetch doctor #${id}.`}
+            onRetry={() => refetch()}
+          />
+        ) : (
+          <EmptyState
+            title={`Physician #${id} Not Found`}
+            description="The requested staff profile does not exist in the active clinical directory."
+            actionText="Return to Doctors Directory"
+            onAction={() => navigate("/doctors")}
+          />
+        )}
       </div>
     );
   }

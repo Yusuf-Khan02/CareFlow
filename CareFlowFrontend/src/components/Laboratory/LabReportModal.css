@@ -1,0 +1,276 @@
+/* Printable Diagnostic Lab Report Modal */
+.report-modal-wrapper {
+  background: #ffffff;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 820px;
+  max-height: 92vh;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.report-modal-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1.25rem;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.report-modal-body {
+  padding: 2rem 2.25rem;
+  overflow-y: auto;
+  color: #1e293b;
+  background-color: #ffffff;
+}
+
+.report-document {
+  border: 2px solid #0f766e;
+  border-radius: 10px;
+  padding: 1.75rem;
+  background-color: #ffffff;
+  position: relative;
+}
+
+/* Header */
+.report-doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 1.25rem;
+  border-bottom: 2px solid #0f766e;
+}
+
+.report-hospital-brand {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+
+.report-logo-badge {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+  color: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.25rem;
+}
+
+.report-hospital-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f766e;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.report-hospital-subtitle {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin: 0.2rem 0 0 0;
+}
+
+.report-order-meta {
+  text-align: right;
+}
+
+.report-order-badge {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.report-order-date {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.2rem;
+}
+
+/* Patient strip */
+.report-patient-grid {
+  background-color: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  padding: 0.875rem 1rem;
+  margin: 1.25rem 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem 1rem;
+}
+
+.report-grid-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.report-grid-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+  margin-bottom: 0.15rem;
+}
+
+.report-grid-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Test Title Bar */
+.report-test-title-bar {
+  background: #f0fdfa;
+  border: 1px solid #99f6e4;
+  padding: 0.625rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.report-test-name {
+  font-weight: 700;
+  color: #0f766e;
+  font-size: 0.95rem;
+}
+
+/* Report Table */
+.report-results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+  margin-bottom: 1.5rem;
+}
+
+.report-results-table th {
+  background-color: #f1f5f9;
+  color: #475569;
+  text-align: left;
+  padding: 0.625rem;
+  font-weight: 600;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.report-results-table td {
+  padding: 0.625rem;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.flag-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.flag-badge.normal {
+  background-color: #f0fdf4;
+  color: #166534;
+}
+
+.flag-badge.high {
+  background-color: #fefce8;
+  color: #854d0e;
+}
+
+.flag-badge.low {
+  background-color: #f0f9ff;
+  color: #0369a1;
+}
+
+.flag-badge.critical {
+  background-color: #fef2f2;
+  color: #991b1b;
+  animation: pulseCritical 1.5s infinite;
+}
+
+@keyframes pulseCritical {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+/* Remarks & Signatures */
+.report-remarks-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.8125rem;
+}
+
+.report-footer-signatures {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.report-signature-block {
+  text-align: center;
+  min-width: 190px;
+}
+
+.report-sign-line {
+  border-bottom: 1.5px solid #0f172a;
+  width: 100%;
+  margin-bottom: 0.35rem;
+}
+
+.report-signer-name {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.report-signer-title {
+  font-size: 0.7rem;
+  color: #64748b;
+}
+
+/* Print Styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .lab-modal-overlay {
+    position: static;
+    background: none;
+    padding: 0;
+  }
+  .report-modal-topbar {
+    display: none !important;
+  }
+  .report-modal-wrapper {
+    box-shadow: none;
+    border: none;
+    max-width: 100%;
+    width: 100%;
+  }
+  .report-document,
+  .report-document * {
+    visibility: visible;
+  }
+  .report-document {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border: 1px solid #0f766e;
+    padding: 1.5cm;
+  }
+}

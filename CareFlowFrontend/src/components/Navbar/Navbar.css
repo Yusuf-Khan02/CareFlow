@@ -59,6 +59,39 @@
   gap: 16px;
 }
 
+/* Hospital Facility Switcher */
+.navbar-facility-switcher {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-hover, #f1f5f9);
+  border: 1px solid var(--border-color, #e2e8f0);
+  padding: 6px 12px;
+  border-radius: var(--radius-md, 8px);
+  transition: all var(--transition-fast, 0.2s ease);
+}
+
+.navbar-facility-switcher:hover {
+  border-color: #93c5fd;
+  background: #f8fafc;
+}
+
+.navbar-facility-select {
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  max-width: 220px;
+}
+
+.navbar-facility-select:focus {
+  outline: none;
+}
+
 /* System Live Pill */
 .navbar-status-pill {
   display: flex;
@@ -68,6 +101,35 @@
   border-radius: var(--radius-full);
   background-color: #ecfdf5;
   border: 1px solid #a7f3d0;
+  transition: all var(--transition-fast, 0.2s ease);
+}
+
+.navbar-status-pill.status-reconnecting {
+  background-color: #fffbeb;
+  border-color: #fde68a;
+}
+
+.navbar-status-pill.status-reconnecting .status-text {
+  color: #92400e;
+}
+
+.navbar-status-pill.status-reconnecting .status-dot-pulsing {
+  background-color: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
+
+.navbar-status-pill.status-disconnected {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+}
+
+.navbar-status-pill.status-disconnected .status-text {
+  color: #991b1b;
+}
+
+.navbar-status-pill.status-disconnected .status-dot-pulsing {
+  background-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
 }
 
 .status-dot-pulsing {

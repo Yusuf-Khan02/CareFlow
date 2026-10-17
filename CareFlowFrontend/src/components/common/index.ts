@@ -7,3 +7,5 @@ export { default as EmptyState } from "./EmptyState/EmptyState";
 export { default as ErrorState } from "./ErrorState/ErrorState";
 export { default as InputField } from "./forms/InputField";
 export { default as SelectField } from "./forms/SelectField";
+export { default as ProtectedRoute } from "./ProtectedRoute";
+

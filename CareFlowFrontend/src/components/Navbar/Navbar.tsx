@@ -1,6 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useTenant } from "../../context/TenantContext";
+import { useSocket } from "../../context/SocketContext";
 import { useToast } from "../common";
+import { Building2 } from "../common/Icons";
 import "./Navbar.css";
 
 interface NavbarProps {
@@ -53,9 +57,34 @@ const INITIAL_NOTIFICATIONS: Notification[] = [
 
 export const Navbar = ({ onToggleMobileSidebar }: NavbarProps) => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const { activeOrganization, organizations, switchOrganization } = useTenant();
+  const { isConnected, connectionStatus, latency, socket } = useSocket();
   const { showToast } = useToast();
 
   const [notifications, setNotifications] = useState<Notification[]>(INITIAL_NOTIFICATIONS);
+
+  // Subscribe to real-time notification push from WebSocket
+  useEffect(() => {
+    if (!socket) return;
+    const handleNewNotif = (notif: any) => {
+      setNotifications((prev) => [
+        {
+          id: notif.id || String(Date.now()),
+          title: notif.title || "Clinical Alert",
+          description: notif.description || "",
+          time: "Just now",
+          type: notif.type || "warning",
+          read: false,
+        },
+        ...prev,
+      ]);
+    };
+    socket.on("notification:new", handleNewNotif);
+    return () => {
+      socket.off("notification:new", handleNewNotif);
+    };
+  }, [socket]);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<"all" | "urgent" | "unread">("all");
@@ -90,11 +119,23 @@ export const Navbar = ({ onToggleMobileSidebar }: NavbarProps) => {
     );
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setIsProfileOpen(false);
+    await logout();
     showToast("Signed out successfully. Returning to login.", "info");
     navigate("/login");
   };
+
+  const initials = user?.name
+    ? user.name
+        .replace("Dr. ", "")
+        .replace("Sister ", "")
+        .split(" ")
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase()
+    : "AD";
 
   const filteredNotifs = notifications.filter((n) => {
     if (activeFilter === "urgent") return n.type === "urgent";
@@ -131,15 +172,54 @@ export const Navbar = ({ onToggleMobileSidebar }: NavbarProps) => {
 
         <div className="navbar-headings">
           <h2 className="navbar-title">Hospital Operations</h2>
-          <span className="navbar-subtitle">CareFlow Medical Center • General Clinic</span>
+          <span className="navbar-subtitle">
+            {activeOrganization?.name || "CareFlow Medical Center"} • {activeOrganization?.code || "HQ"}
+          </span>
         </div>
       </div>
 
       <div className="navbar-right">
-        {/* Status Pill */}
-        <div className="navbar-status-pill">
+        {/* Hospital Facility Tenant Selector */}
+        <div className="navbar-facility-switcher" title="Active Hospital Facility">
+          <Building2 size={16} color="#60a5fa" />
+          <select
+            className="navbar-facility-select"
+            value={activeOrganization?.id || ""}
+            onChange={(e) => {
+              switchOrganization(e.target.value);
+              const target = organizations.find((o) => o.id === e.target.value);
+              showToast(`Switched active hospital facility to ${target?.name || "facility"}`, "info");
+            }}
+          >
+            {organizations.map((org) => (
+              <option key={org.id} value={org.id}>
+                {org.name} ({org.code})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Real-time Socket Status Pill */}
+        <div
+          className={`navbar-status-pill ${
+            isConnected
+              ? "status-connected"
+              : connectionStatus === "reconnecting"
+              ? "status-reconnecting"
+              : "status-disconnected"
+          }`}
+          title={
+            isConnected
+              ? `Real-Time WebSocket Active (${latency}ms) • Tenant: ${activeOrganization?.code || "HQ"}`
+              : connectionStatus === "reconnecting"
+              ? "Reconnecting to real-time stream..."
+              : "WebSocket offline"
+          }
+        >
           <span className="status-dot-pulsing" />
-          <span className="status-text">System Live</span>
+          <span className="status-text">
+            {isConnected ? `Live (${latency}ms)` : connectionStatus === "reconnecting" ? "Reconnecting" : "Offline"}
+          </span>
         </div>
 
         {/* Notification Bell & Dropdown */}
@@ -272,12 +352,12 @@ export const Navbar = ({ onToggleMobileSidebar }: NavbarProps) => {
             id="btn-user-profile-toggle"
           >
             <div className="user-avatar">
-              <span>AD</span>
+              <span>{initials}</span>
               <span className="avatar-online-dot" />
             </div>
             <div className="user-info-text">
-              <span className="user-name">Dr. A. Davis</span>
-              <span className="user-role">Hospital Admin</span>
+              <span className="user-name">{user?.name || "Dr. Alexander Davis"}</span>
+              <span className="user-role">{user?.role || "Hospital Admin"}</span>
             </div>
             <svg
               className={`user-chevron ${isProfileOpen ? "rotated" : ""}`}
@@ -295,11 +375,11 @@ export const Navbar = ({ onToggleMobileSidebar }: NavbarProps) => {
           {isProfileOpen && (
             <div className="dropdown-panel profile-panel animate-scale-up" id="user-profile-panel">
               <div className="profile-panel-header">
-                <div className="profile-avatar-lg">AD</div>
+                <div className="profile-avatar-lg">{initials}</div>
                 <div className="profile-details">
-                  <h4 className="profile-display-name">Dr. Alexander Davis</h4>
-                  <p className="profile-email">admin@careflow.demo</p>
-                  <span className="profile-badge">Platform Administrator</span>
+                  <h4 className="profile-display-name">{user?.name || "Dr. Alexander Davis"}</h4>
+                  <p className="profile-email">{user?.email || "admin@careflow.demo"}</p>
+                  <span className="profile-badge">{user?.role || "Platform Administrator"}</span>
                 </div>
               </div>
 

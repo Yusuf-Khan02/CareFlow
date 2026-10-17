@@ -1,0 +1,302 @@
+openapi: 3.0.3
+info:
+  title: CareFlow Smart Hospital Operations Platform API
+  description: >
+    Enterprise REST API for multi-tenant hospital operations, clinical EMR,
+    real-time event streaming, BullMQ background jobs, private file vault with
+    15-minute signed downloads, and HIPAA de-identified clinical AI assistance.
+  version: 1.0.0
+  contact:
+    name: CareFlow Clinical Engineering
+    email: dev@careflow.demo
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Local Development & Staging Server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    tenantHeader:
+      type: apiKey
+      in: header
+      name: x-organization-id
+      description: Hospital facility partition boundary identifier (e.g. org-careflow-central)
+
+security:
+  - bearerAuth: []
+  - tenantHeader: []
+
+paths:
+  /health:
+    get:
+      summary: Health check and database connectivity telemetry
+      security: []
+      responses:
+        '200':
+          description: Service healthy and database connected
+        '503':
+          description: Service degraded or database unavailable
+
+  /auth/login:
+    post:
+      summary: Authenticate clinical staff and issue dual JWT tokens
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  example: admin@careflow.demo
+                password:
+                  type: string
+                  example: CareFlow@2026
+      responses:
+        '200':
+          description: Login successful with access and refresh tokens
+        '401':
+          description: Invalid email or password
+
+  /patients:
+    get:
+      summary: List patients for current tenant partition
+      parameters:
+        - in: query
+          name: search
+          schema: { type: string }
+        - in: query
+          name: department
+          schema: { type: string }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, default: 20 }
+      responses:
+        '200':
+          description: Patient directory records
+
+  /appointments:
+    get:
+      summary: List appointments with date and status filters
+      parameters:
+        - in: query
+          name: date
+          schema: { type: string }
+        - in: query
+          name: doctorId
+          schema: { type: string }
+      responses:
+        '200':
+          description: Appointments list
+    post:
+      summary: Book an appointment with collision prevention
+      responses:
+        '201':
+          description: Appointment booked
+        '409':
+          description: Doctor already booked for specified slot
+
+  /queue/tokens:
+    get:
+      summary: Live outpatient triage queue
+      responses:
+        '200':
+          description: Active tokens sorted by emergency and wait times
+
+  /queue/tokens/call-next:
+    post:
+      summary: Call next eligible waiting patient
+      responses:
+        '200':
+          description: Token transitioned to Called status
+
+  /consultations:
+    post:
+      summary: Create clinical visit consultation and atomic prescription pad
+      responses:
+        '201':
+          description: Consultation completed and prescriptions linked
+
+  /laboratory/orders:
+    get:
+      summary: Diagnostic lab orders list
+      responses:
+        '200':
+          description: Lab orders with specimen statuses
+    post:
+      summary: Place diagnostic laboratory test order
+      responses:
+        '201':
+          description: Lab order created
+
+  /pharmacy/medicines:
+    get:
+      summary: Hospital formulary directory with stock levels and FEFO batches
+      responses:
+        '200':
+          description: Formulary medicines and active batches
+
+  /pharmacy/dispense:
+    post:
+      summary: Dispense medication using FEFO batch deduction
+      responses:
+        '200':
+          description: Medication dispensed and inventory movement recorded
+
+  /beds:
+    get:
+      summary: Inpatient bed inventory with ward occupancy metrics
+      responses:
+        '200':
+          description: Beds categorized by status
+
+  /admissions:
+    post:
+      summary: Admit inpatient to available bed
+      responses:
+        '201':
+          description: Patient admitted and bed set to Occupied
+
+  /billing/invoices:
+    get:
+      summary: Itemized patient invoices and aging receivables
+      responses:
+        '200':
+          description: Invoices list
+    post:
+      summary: Create invoice with line items, tax, and discount
+      responses:
+        '201':
+          description: Invoice created with sequential number
+
+  /billing/payments:
+    post:
+      summary: Record payment settlement and update balance due
+      responses:
+        '201':
+          description: Payment receipt issued
+
+  /reports/overview:
+    get:
+      summary: Executive hospital KPIs and monthly trend distributions
+      responses:
+        '200':
+          description: Analytics telemetry
+
+  /audit-logs:
+    get:
+      summary: Immutable security audit ledger (HIPAA §164.312(b))
+      responses:
+        '200':
+          description: Audited user actions and entity mutations
+
+  /jobs:
+    get:
+      summary: BullMQ background job metrics and dead-letter queue
+      responses:
+        '200':
+          description: Job queues status
+
+  /files:
+    get:
+      summary: Private document vault catalog
+      parameters:
+        - in: query
+          name: category
+          schema: { type: string }
+        - in: query
+          name: search
+          schema: { type: string }
+      responses:
+        '200':
+          description: Encrypted document list with SHA-256 hashes
+
+  /files/upload:
+    post:
+      summary: Upload document to private storage root with SHA-256 checksum
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file, category]
+              properties:
+                file: { type: string, format: binary }
+                category: { type: string }
+                patientId: { type: integer }
+                description: { type: string }
+      responses:
+        '201':
+          description: File encrypted and stored in private vault
+
+  /files/{id}/signed-url:
+    get:
+      summary: Generate 15-minute cryptographically signed download token
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Signed HMAC token and streaming download URL
+
+  /files/download/{token}:
+    get:
+      summary: Stream file from private storage root using signed token
+      security: []
+      parameters:
+        - in: path
+          name: token
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Binary file stream with MIME header and audit log entry
+
+  /ai/summarize-encounter:
+    post:
+      summary: HIPAA de-identified SOAP clinical summarization with ICD-10 tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                patientName: { type: string }
+                mrn: { type: string }
+                chiefComplaint: { type: string }
+                clinicalNotes: { type: string }
+                diagnosis: { type: string }
+                treatment: { type: string }
+                vitals: { type: object }
+      responses:
+        '200':
+          description: Structured clinical documentation with verification disclaimer
+
+  /ai/operational-assistant:
+    post:
+      summary: Live database-grounded administrative operational copilot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query: { type: string }
+      responses:
+        '200':
+          description: Natural language answer backed by active database telemetry

@@ -1,27 +1,50 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Patient } from "../types";
-import { getStoredPatients, saveStoredPatients } from "../data/mockData";
+import { patientService } from "../services";
 import { PatientModal } from "../components/PatientModal/PatientModal";
-import { useToast, EmptyState } from "../components/common";
+import { useToast, EmptyState, ErrorState, PageLoader } from "../components/common";
 import "./PatientDetails.css";
 
 export const PatientDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { showToast } = useToast();
 
-  const [patient, setPatient] = useState<Patient | null>(null);
   const [activeTab, setActiveTab] = useState<"overview" | "visits" | "appointments">("overview");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  useEffect(() => {
-    const list = getStoredPatients();
-    const found = list.find((p) => p.id === Number(id));
-    setPatient(found || null);
-  }, [id]);
+  // TanStack Query for single patient details
+  const {
+    data: patient,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["patient", Number(id)],
+    queryFn: () => patientService.getPatientById(Number(id)),
+    enabled: !!id && !isNaN(Number(id)),
+  });
 
-  if (!patient) {
+  // Edit mutation
+  const editMutation = useMutation({
+    mutationFn: (updatedData: Partial<Patient>) =>
+      patientService.updatePatient(Number(id), updatedData),
+    onSuccess: (updated) => {
+      queryClient.invalidateQueries({ queryKey: ["patient", Number(id)] });
+      queryClient.invalidateQueries({ queryKey: ["patients"] });
+      showToast(`Updated record for ${updated.name}`, "success");
+      setIsEditModalOpen(false);
+    },
+    onError: (err: any) => {
+      showToast(err.message || "Failed to update patient record", "error");
+    },
+  });
+
+  if (isLoading) {
     return (
       <div className="patient-details-page">
         <button
@@ -31,24 +54,41 @@ export const PatientDetails = () => {
         >
           ← Back to Patient Directory
         </button>
-        <EmptyState
-          title={`Patient Record #${id} Not Found`}
-          description="The requested patient identifier does not correspond to an active or archived record."
-          actionText="Return to Patient Directory"
-          onAction={() => navigate("/patients")}
-        />
+        <PageLoader message={`Loading clinical record #${id} from SQL database...`} />
+      </div>
+    );
+  }
+
+  if (isError || !patient) {
+    return (
+      <div className="patient-details-page">
+        <button
+          type="button"
+          className="back-nav-btn"
+          onClick={() => navigate("/patients")}
+        >
+          ← Back to Patient Directory
+        </button>
+        {isError ? (
+          <ErrorState
+            title="Failed to Load Clinical Record"
+            message={error?.message || `Could not fetch patient #${id}.`}
+            onRetry={() => refetch()}
+          />
+        ) : (
+          <EmptyState
+            title={`Patient Record #${id} Not Found`}
+            description="The requested patient identifier does not correspond to an active or archived record."
+            actionText="Return to Patient Directory"
+            onAction={() => navigate("/patients")}
+          />
+        )}
       </div>
     );
   }
 
   const handleSaveEdit = (updatedData: Partial<Patient>) => {
-    const list = getStoredPatients();
-    const updatedList = list.map((p) =>
-      p.id === patient.id ? ({ ...p, ...updatedData } as Patient) : p
-    );
-    saveStoredPatients(updatedList);
-    setPatient((prev) => (prev ? ({ ...prev, ...updatedData } as Patient) : null));
-    showToast(`Updated record for ${patient.name}`, "success");
+    editMutation.mutate(updatedData);
   };
 
   return (
@@ -80,14 +120,30 @@ export const PatientDetails = () => {
 
           <button
             type="button"
+            className="action-btn-outline"
+            onClick={() => navigate(`/consultations?patientId=${patient.id}`)}
+            id="btn-start-consultation"
+            style={{ color: "#0f766e", borderColor: "#0f766e" }}
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+              <path d="M12 5v6" />
+              <path d="M9 8h6" />
+            </svg>
+            <span>Start Consultation</span>
+          </button>
+
+          <button
+            type="button"
             className="action-btn-primary"
             onClick={() => setIsEditModalOpen(true)}
             id="btn-edit-patient-details"
+            disabled={editMutation.isPending}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
             </svg>
-            <span>Edit Patient Record</span>
+            <span>{editMutation.isPending ? "Saving..." : "Edit Patient Record"}</span>
           </button>
         </div>
       </div>
@@ -113,7 +169,7 @@ export const PatientDetails = () => {
             <span>•</span>
             <span><strong>Gender:</strong> {patient.gender}</span>
             <span>•</span>
-            <span><strong>Blood:</strong> <span className="blood-tag">{patient.bloodGroup}</span></span>
+            <span><strong>Blood Group:</strong> <span className="blood-tag">{patient.bloodGroup}</span></span>
             <span>•</span>
             <span><strong>Department:</strong> {patient.department}</span>
             <span>•</span>
@@ -122,161 +178,194 @@ export const PatientDetails = () => {
         </div>
       </div>
 
-      {/* Vitals Summary Grid */}
-      <div className="vitals-grid">
-        <div className="vital-card">
-          <span className="vital-label">BLOOD PRESSURE</span>
-          <div className="vital-value-row">
-            <span className="vital-value">{patient.vitals?.bloodPressure || "120/80"}</span>
-          </div>
-          <span className="vital-sub">Recorded {patient.vitals?.recordedAt || "Today"}</span>
-        </div>
-
-        <div className="vital-card">
-          <span className="vital-label">HEART RATE</span>
-          <div className="vital-value-row">
-            <span className="vital-value">{patient.vitals?.heartRate || 72}</span>
-            <span className="vital-unit">BPM</span>
-          </div>
-          <span className="vital-sub">Normal resting range</span>
-        </div>
-
-        <div className="vital-card">
-          <span className="vital-label">TEMPERATURE</span>
-          <div className="vital-value-row">
-            <span className="vital-value">{patient.vitals?.temperature || "98.6 °F"}</span>
-          </div>
-          <span className="vital-sub">Oral thermometer</span>
-        </div>
-
-        <div className="vital-card">
-          <span className="vital-label">OXYGEN SATURATION (SpO2)</span>
-          <div className="vital-value-row">
-            <span className="vital-value">{patient.vitals?.spO2 || 99}%</span>
-          </div>
-          <span className="vital-sub">Pulse oximeter reading</span>
-        </div>
-      </div>
-
-      {/* Tabs Navigation */}
-      <div className="details-tabs-bar">
+      {/* Patient Details Subnavigation Tabs */}
+      <div className="patient-details-tabs">
         <button
           type="button"
-          className={`details-tab ${activeTab === "overview" ? "active" : ""}`}
+          className={`details-tab-btn ${activeTab === "overview" ? "active" : ""}`}
           onClick={() => setActiveTab("overview")}
         >
-          Clinical Overview & Contact
+          🩺 Clinical Overview & Vitals
         </button>
         <button
           type="button"
-          className={`details-tab ${activeTab === "visits" ? "active" : ""}`}
+          className={`details-tab-btn ${activeTab === "visits" ? "active" : ""}`}
           onClick={() => setActiveTab("visits")}
         >
-          Consultation & Visit History ({patient.visits?.length || 0})
+          📋 Consultation & Visits ({patient.visits?.length || 0})
         </button>
         <button
           type="button"
-          className={`details-tab ${activeTab === "appointments" ? "active" : ""}`}
+          className={`details-tab-btn ${activeTab === "appointments" ? "active" : ""}`}
           onClick={() => setActiveTab("appointments")}
         >
-          Appointments ({patient.appointments?.length || 0})
+          📅 Appointments ({patient.appointments?.length || 0})
         </button>
       </div>
 
-      {/* Tab 1: Clinical Overview */}
+      {/* TAB 1: Clinical Overview */}
       {activeTab === "overview" && (
-        <div className="tab-pane-grid">
-          {/* Contact Details Card */}
+        <div className="details-overview-grid">
+          {/* Vitals Box */}
           <div className="details-info-box">
-            <h3 className="box-section-title">Patient Contact & Demographics</h3>
-            <div className="info-key-val-list">
-              <div className="info-kv-row">
-                <span className="kv-key">Primary Phone:</span>
-                <span className="kv-val">{patient.phone}</span>
+            <div className="box-header-row">
+              <h3 className="box-section-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" strokeWidth="2.5">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                </svg>
+                <span>Latest Recorded Clinical Vitals</span>
+              </h3>
+              <span className="vitals-timestamp">Recorded: {patient.vitals?.recordedAt || "Admission baseline"}</span>
+            </div>
+            <div className="vitals-display-grid">
+              <div className="vital-item-card">
+                <span className="vital-item-label">🫀 BLOOD PRESSURE</span>
+                <span className="vital-item-val">{patient.vitals?.bloodPressure || "120/80 mmHg"}</span>
+                <span className="vital-item-status status-normal">Resting baseline</span>
               </div>
-              <div className="info-kv-row">
-                <span className="kv-key">Email Address:</span>
-                <span className="kv-val">{patient.email}</span>
+              <div className="vital-item-card">
+                <span className="vital-item-label">💓 PULSE RATE</span>
+                <span className="vital-item-val">{patient.vitals?.heartRate || 72} <small>BPM</small></span>
+                <span className="vital-item-status status-normal">Regular sinus rhythm</span>
               </div>
-              <div className="info-kv-row">
-                <span className="kv-key">Residential Address:</span>
-                <span className="kv-val">{patient.address}</span>
+              <div className="vital-item-card">
+                <span className="vital-item-label">🌡️ BODY TEMPERATURE</span>
+                <span className="vital-item-val">{patient.vitals?.temperature || "98.6 °F"}</span>
+                <span className="vital-item-status status-normal">Normothermic (Afebrile)</span>
               </div>
-              <div className="info-kv-row">
-                <span className="kv-key">Admission Date:</span>
-                <span className="kv-val">{patient.admissionDate}</span>
+              <div className="vital-item-card">
+                <span className="vital-item-label">🫁 OXYGEN SATURATION</span>
+                <span className="vital-item-val">{patient.vitals?.spO2 || 98}% <small>SpO2</small></span>
+                <span className="vital-item-status status-normal">Room air perfusion</span>
               </div>
             </div>
           </div>
 
-          {/* Emergency Contact & Medical Warnings */}
+          {/* Contact & Demographics Box */}
           <div className="details-info-box">
-            <h3 className="box-section-title">Emergency Contact & Medical Alerts</h3>
-            <div className="info-key-val-list">
-              <div className="info-kv-row">
-                <span className="kv-key">Contact Person:</span>
-                <span className="kv-val font-semibold">
-                  {patient.emergencyContact?.name} ({patient.emergencyContact?.relation})
-                </span>
+            <h3 className="box-section-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" strokeWidth="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              <span>Contact & Demographic Details</span>
+            </h3>
+            <div className="details-field-list">
+              <div className="details-field-item">
+                <span className="field-lbl">Phone Number</span>
+                <span className="field-val">{patient.phone}</span>
               </div>
-              <div className="info-kv-row">
-                <span className="kv-key">Emergency Phone:</span>
-                <span className="kv-val">{patient.emergencyContact?.phone}</span>
+              <div className="details-field-item">
+                <span className="field-lbl">Email Address</span>
+                <span className="field-val">{patient.email || "—"}</span>
+              </div>
+              <div className="details-field-item">
+                <span className="field-lbl">Residential Address</span>
+                <span className="field-val">{patient.address || "—"}</span>
+              </div>
+              <div className="details-field-item">
+                <span className="field-lbl">Admission Date</span>
+                <span className="field-val">{patient.admissionDate || "2026-10-15"}</span>
               </div>
             </div>
+          </div>
 
-            <div className="allergies-box-wrapper">
-              <span className="allergies-header">DOCUMENTED ALLERGIES</span>
-              <div className="allergies-tags-list">
-                {patient.allergies?.map((allergy, i) => (
-                  <span
-                    key={i}
-                    className={`allergy-chip ${allergy.toLowerCase().includes("none") ? "chip-safe" : "chip-warning"}`}
-                  >
+          {/* Emergency Contact Box */}
+          <div className="details-info-box">
+            <h3 className="box-section-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+                <path d="M12 8v4" />
+                <path d="M12 16h.01" />
+              </svg>
+              <span>Emergency Contact Details</span>
+            </h3>
+            <div className="details-field-list">
+              <div className="details-field-item">
+                <span className="field-lbl">Next of Kin Name</span>
+                <span className="field-val">{patient.emergencyContact?.name || "Next of Kin"}</span>
+              </div>
+              <div className="details-field-item">
+                <span className="field-lbl">Relationship</span>
+                <span className="field-val">{patient.emergencyContact?.relation || "Family"}</span>
+              </div>
+              <div className="details-field-item">
+                <span className="field-lbl">Emergency Phone</span>
+                <span className="field-val">{patient.emergencyContact?.phone || patient.phone}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Known Allergies */}
+          <div className="details-info-box">
+            <h3 className="box-section-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              <span>Known Allergies & Contraindications</span>
+            </h3>
+            <div className="allergies-tag-list">
+              {patient.allergies && patient.allergies.length > 0 ? (
+                patient.allergies.map((allergy, i) => (
+                  <span key={i} className="allergy-tag">
                     ⚠️ {allergy}
                   </span>
-                ))}
-              </div>
+                ))
+              ) : (
+                <span className="no-allergies">✓ No known medical or drug allergies documented.</span>
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {/* Tab 2: Consultation & Visit History */}
+      {/* TAB 2: Visits & Consultations */}
       {activeTab === "visits" && (
         <div className="details-info-box">
-          <h3 className="box-section-title">Consultation & Visit Notes</h3>
+          <h3 className="box-section-title">Encounter History & Clinical Notes</h3>
           {patient.visits && patient.visits.length > 0 ? (
             <div className="visits-timeline">
               {patient.visits.map((vis) => (
-                <div key={vis.id} className="visit-entry-card">
+                <div key={vis.id} className="visit-timeline-entry">
                   <div className="visit-entry-header">
-                    <div>
-                      <h4 className="visit-entry-doctor">{vis.doctorName}</h4>
-                      <span className="visit-entry-dept">{vis.department}</span>
-                    </div>
-                    <span className="visit-entry-date">{vis.date}</span>
+                    <span className="visit-date">📅 {vis.date}</span>
+                    <span className="visit-doc">{vis.doctorName} ({vis.department})</span>
                   </div>
-
-                  <div className="visit-body-section">
-                    <p><strong>Chief Complaint:</strong> {vis.chiefComplaint}</p>
-                    <p><strong>Clinical Assessment:</strong> {vis.diagnosis}</p>
-                    <p><strong>Treatment & Rx Plan:</strong> {vis.treatment}</p>
-                    {vis.notes && <p className="visit-notes"><em>Clinical Notes:</em> {vis.notes}</p>}
+                  <div className="visit-detail-grid">
+                    <div>
+                      <strong>Chief Complaint:</strong>
+                      <p>{vis.chiefComplaint}</p>
+                    </div>
+                    <div>
+                      <strong>Diagnosis:</strong>
+                      <p>{vis.diagnosis}</p>
+                    </div>
+                    <div>
+                      <strong>Prescribed Treatment:</strong>
+                      <p>{vis.treatment}</p>
+                    </div>
+                    {vis.notes && (
+                      <div className="visit-notes-box">
+                        <strong>Clinical Notes:</strong>
+                        <p>{vis.notes}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
           ) : (
             <EmptyState
-              title="No prior consultations recorded"
-              description="Visits and encounter notes will appear here once consultations are initiated."
+              title="No consultation notes recorded"
+              description="Clinical encounter records and prescriptions will appear here when doctors complete consultations in Phase 8."
             />
           )}
         </div>
       )}
 
-      {/* Tab 3: Appointments */}
+      {/* TAB 3: Appointments */}
       {activeTab === "appointments" && (
         <div className="details-info-box">
           <h3 className="box-section-title">Scheduled & Past Appointments</h3>

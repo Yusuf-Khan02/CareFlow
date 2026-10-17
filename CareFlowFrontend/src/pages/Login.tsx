@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { useToast, Spinner } from "../components/common";
 import "./Login.css";
 
@@ -21,6 +22,8 @@ const DEMO_ROLES: DemoRole[] = [
 
 export const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   const { showToast } = useToast();
 
   const [email, setEmail] = useState("admin@careflow.demo");
@@ -29,6 +32,8 @@ export const Login = () => {
   const [selectedRole, setSelectedRole] = useState("Hospital Admin");
   const [isLoading, setIsLoading] = useState(false);
 
+  const fromLocation = (location.state as any)?.from?.pathname || "/dashboard";
+
   const handleRoleSelect = (role: DemoRole) => {
     setSelectedRole(role.role);
     setEmail(role.email);
@@ -36,7 +41,7 @@ export const Login = () => {
     showToast(`Loaded ${role.role} credentials (${role.name})`, "info", 2000);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       showToast("Please enter your email and password", "warning");
@@ -45,12 +50,15 @@ export const Login = () => {
 
     setIsLoading(true);
 
-    // Realistic demo simulated authentication
-    setTimeout(() => {
+    try {
+      await login(email, password);
+      showToast(`Welcome back! Session verified for ${selectedRole}.`, "success");
+      navigate(fromLocation, { replace: true });
+    } catch (err: any) {
+      showToast(err.message || "Authentication failed. Please verify your credentials.", "error");
+    } finally {
       setIsLoading(false);
-      showToast(`Welcome back, ${selectedRole}! Operational workspace ready.`, "success");
-      navigate("/dashboard");
-    }, 600);
+    }
   };
 
   return (
@@ -155,19 +163,19 @@ export const Login = () => {
 
             <form onSubmit={handleSubmit} className="login-form">
               {/* Email Field */}
-              <div className="form-group">
-                <label htmlFor="login-email" className="form-label">
+              <div className="login-form-group form-group">
+                <label htmlFor="login-email" className="login-form-label form-label">
                   Work Email / Staff ID
                 </label>
-                <div className="input-icon-wrapper">
-                  <svg className="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <div className="login-input-icon-wrapper input-icon-wrapper">
+                  <svg className="login-input-icon input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect width="20" height="16" x="2" y="4" rx="2" />
                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                   </svg>
                   <input
                     id="login-email"
                     type="email"
-                    className="form-input"
+                    className="login-form-input form-input"
                     placeholder="doctor@hospital.org"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -177,9 +185,9 @@ export const Login = () => {
               </div>
 
               {/* Password Field */}
-              <div className="form-group">
-                <div className="form-label-row">
-                  <label htmlFor="login-password" className="form-label">
+              <div className="login-form-group form-group">
+                <div className="login-form-label-row form-label-row">
+                  <label htmlFor="login-password" className="login-form-label form-label">
                     Password
                   </label>
                   <button
@@ -190,15 +198,15 @@ export const Login = () => {
                     Forgot password?
                   </button>
                 </div>
-                <div className="input-icon-wrapper">
-                  <svg className="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <div className="login-input-icon-wrapper input-icon-wrapper">
+                  <svg className="login-input-icon input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                   </svg>
                   <input
                     id="login-password"
                     type={showPassword ? "text" : "password"}
-                    className="form-input"
+                    className="login-form-input form-input"
                     placeholder="••••••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -216,9 +224,9 @@ export const Login = () => {
               </div>
 
               {/* Remember Me */}
-              <div className="form-row-checkbox">
-                <label className="checkbox-label">
-                  <input type="checkbox" defaultChecked className="checkbox-input" />
+              <div className="login-form-row-checkbox form-row-checkbox">
+                <label className="login-checkbox-label checkbox-label">
+                  <input type="checkbox" defaultChecked className="login-checkbox-input checkbox-input" />
                   <span>Remember this clinical terminal</span>
                 </label>
               </div>

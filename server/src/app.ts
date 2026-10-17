@@ -4,6 +4,24 @@ import ENV from "./config/env.js";
 import requestLogger from "./middleware/requestLogger.js";
 import { notFoundHandler, errorHandler } from "./middleware/errorHandler.js";
 import healthRoutes from "./modules/health/healthRoutes.js";
+import authRoutes from "./modules/auth/authRoutes.js";
+import patientRoutes from "./modules/patients/patientRoutes.js";
+import doctorRoutes from "./modules/doctors/doctorRoutes.js";
+import departmentRoutes from "./modules/departments/departmentRoutes.js";
+import appointmentRoutes from "./modules/appointments/appointmentRoutes.js";
+import queueRoutes from "./modules/queue/queueRoutes.js";
+import encounterRoutes from "./modules/encounters/encounterRoutes.js";
+import prescriptionRoutes from "./modules/encounters/prescriptionRoutes.js";
+import labRoutes from "./modules/laboratory/labRoutes.js";
+import pharmacyRoutes from "./modules/pharmacy/pharmacyRoutes.js";
+import bedRoutes, { wardRoutes, admissionRoutes } from "./modules/beds/bedRoutes.js";
+import billingRoutes, { reportRoutes } from "./modules/billing/billingRoutes.js";
+import organizationRoutes from "./modules/organizations/organizationRoutes.js";
+import auditRoutes from "./modules/audit/auditRoutes.js";
+import jobRoutes from "./modules/jobs/jobRoutes.js";
+import fileRoutes from "./modules/files/fileRoutes.js";
+import aiRoutes from "./modules/ai/aiRoutes.js";
+import tenantMiddleware from "./middleware/tenantMiddleware.js";
 
 export const createApp = (): express.Application => {
   const app = express();
@@ -26,7 +44,7 @@ export const createApp = (): express.Application => {
       },
       credentials: true,
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+      allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "x-organization-id", "x-client-timestamp"],
     })
   );
 
@@ -34,8 +52,9 @@ export const createApp = (): express.Application => {
   app.use(express.json({ limit: "10mb" }));
   app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-  // 3. Request Logging
+  // 3. Request Logging & Tenant Context
   app.use(requestLogger);
+  app.use(tenantMiddleware);
 
   // 4. Base Routes
   app.get("/", (_req, res) => {
@@ -50,6 +69,32 @@ export const createApp = (): express.Application => {
   // 5. Mount Submodules
   app.use("/health", healthRoutes);
   app.use(`${ENV.API_PREFIX}/health`, healthRoutes);
+  app.use(`${ENV.API_PREFIX}/auth`, authRoutes);
+  app.use(`${ENV.API_PREFIX}/organizations`, organizationRoutes);
+  app.use(`${ENV.API_PREFIX}/audit-logs`, auditRoutes);
+  app.use(`${ENV.API_PREFIX}/patients`, patientRoutes);
+  app.use(`${ENV.API_PREFIX}/doctors`, doctorRoutes);
+  app.use(`${ENV.API_PREFIX}/departments`, departmentRoutes);
+  app.use(`${ENV.API_PREFIX}/appointments`, appointmentRoutes);
+  app.use(`${ENV.API_PREFIX}/queue`, queueRoutes);
+  app.use(`${ENV.API_PREFIX}/consultations`, encounterRoutes);
+  app.use(`${ENV.API_PREFIX}/encounters`, encounterRoutes);
+  app.use(`${ENV.API_PREFIX}/prescriptions`, prescriptionRoutes);
+  app.use(`${ENV.API_PREFIX}/laboratory`, labRoutes);
+  app.use(`${ENV.API_PREFIX}/lab-orders`, labRoutes);
+  app.use(`${ENV.API_PREFIX}/pharmacy`, pharmacyRoutes);
+  app.use(`${ENV.API_PREFIX}/medicines`, pharmacyRoutes);
+  app.use(`${ENV.API_PREFIX}/inventory`, pharmacyRoutes);
+  app.use(`${ENV.API_PREFIX}/beds`, bedRoutes);
+  app.use(`${ENV.API_PREFIX}/wards`, wardRoutes);
+  app.use(`${ENV.API_PREFIX}/admissions`, admissionRoutes);
+  app.use(`${ENV.API_PREFIX}/billing`, billingRoutes);
+  app.use(`${ENV.API_PREFIX}/invoices`, billingRoutes);
+  app.use(`${ENV.API_PREFIX}/payments`, billingRoutes);
+  app.use(`${ENV.API_PREFIX}/reports`, reportRoutes);
+  app.use(`${ENV.API_PREFIX}/jobs`, jobRoutes);
+  app.use(`${ENV.API_PREFIX}/files`, fileRoutes);
+  app.use(`${ENV.API_PREFIX}/ai`, aiRoutes);
 
   // 6. 404 & Centralized Error Handlers (must be last)
   app.use(notFoundHandler);

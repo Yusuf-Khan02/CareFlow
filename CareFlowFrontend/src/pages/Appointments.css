@@ -1,0 +1,660 @@
+/* ==========================================================================
+   CareFlow Smart Hospital Operations — Appointments Workspace Styles
+   ========================================================================== */
+
+.appointments-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fadeIn 0.25s ease-out;
+}
+
+/* --------------------------------------------------------------------------
+   Header Row
+   -------------------------------------------------------------------------- */
+.appointments-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.appointments-title-group h1 {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.appointments-subtitle {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  margin: 4px 0 0 0;
+}
+
+.book-apt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: var(--radius-lg);
+  border: none;
+  background: var(--accent-gradient);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(15, 118, 110, 0.32);
+  transition: all var(--transition-fast);
+}
+
+.book-apt-btn:hover {
+  background: var(--accent-gradient-hover);
+  box-shadow: 0 6px 20px rgba(15, 118, 110, 0.42);
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   Operational Stats KPI Grid
+   -------------------------------------------------------------------------- */
+.apt-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+}
+
+.apt-stat-card {
+  background-color: var(--surface-color);
+  border-radius: var(--radius-xl);
+  padding: 16px 18px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all var(--transition-fast);
+}
+
+.apt-stat-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-md);
+}
+
+.apt-stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.apt-stat-icon.total {
+  background-color: #f0fdfa;
+  color: var(--primary-color);
+  border: 1px solid #ccfbf1;
+}
+
+.apt-stat-icon.confirmed {
+  background-color: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+
+.apt-stat-icon.checkedin {
+  background-color: #fefce8;
+  color: #ca8a04;
+  border: 1px solid #fef08a;
+}
+
+.apt-stat-icon.inconsult {
+  background-color: #f0fdf4;
+  color: #0d9488;
+  border: 1px solid #99f6e4;
+}
+
+.apt-stat-icon.completed {
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.apt-stat-icon.cancelled {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.apt-stat-data {
+  display: flex;
+  flex-direction: column;
+}
+
+.apt-stat-number {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.apt-stat-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Filter & Search Toolbar
+   -------------------------------------------------------------------------- */
+.apt-toolbar-card {
+  background-color: var(--surface-color);
+  border-radius: var(--radius-xl);
+  padding: 16px 20px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.apt-toolbar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.apt-search-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 260px;
+}
+
+.apt-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.apt-search-input {
+  width: 100%;
+  padding: 9px 12px 9px 38px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  font-size: 13.5px;
+  color: var(--text-primary);
+  background-color: #f8fafc;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.apt-search-input:focus {
+  background-color: #ffffff;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+}
+
+.apt-view-toggle {
+  display: inline-flex;
+  background-color: #f1f5f9;
+  padding: 3px;
+  border-radius: var(--radius-md);
+  gap: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.view-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.view-toggle-btn.active {
+  background-color: #ffffff;
+  color: var(--primary-color);
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.apt-toolbar-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.apt-filters-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.toolbar-select {
+  padding: 7px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.toolbar-select:focus {
+  border-color: var(--primary-color);
+}
+
+.date-presets-group {
+  display: inline-flex;
+  background-color: #f8fafc;
+  padding: 2px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  gap: 2px;
+}
+
+.date-preset-btn {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.date-preset-btn.active {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+.custom-date-input {
+  padding: 6px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  font-size: 12.5px;
+  color: var(--text-primary);
+  outline: none;
+}
+
+/* --------------------------------------------------------------------------
+   Table View
+   -------------------------------------------------------------------------- */
+.apt-table-container {
+  background-color: var(--surface-color);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.apt-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.apt-table th {
+  background-color: #f8fafc;
+  padding: 12px 18px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #64748b;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.apt-table td {
+  padding: 14px 18px;
+  font-size: 13.5px;
+  color: var(--text-primary);
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.apt-table tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.apt-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.patient-cell-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.patient-cell-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  background: var(--accent-gradient);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.patient-cell-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.patient-cell-name {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.patient-cell-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mrn-chip {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.doctor-cell-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.doctor-cell-name {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.doctor-cell-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.datetime-badge-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.date-pill {
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.time-pill {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary-color);
+  background-color: #f0fdfa;
+  border: 1px solid #ccfbf1;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  width: fit-content;
+}
+
+.type-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+.type-pill.type-emergency {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.type-pill.type-consultation {
+  background-color: #f0fdfa;
+  color: #0f766e;
+  border-color: #ccfbf1;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}
+
+.status-pill.status-scheduled {
+  background-color: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+
+.status-pill.status-confirmed {
+  background-color: #f5f3ff;
+  color: #7c3aed;
+  border: 1px solid #ddd6fe;
+}
+
+.status-pill.status-checkedin {
+  background-color: #fefce8;
+  color: #ca8a04;
+  border: 1px solid #fef08a;
+}
+
+.status-pill.status-inprogress {
+  background-color: #f0fdf4;
+  color: #0d9488;
+  border: 1px solid #99f6e4;
+}
+
+.status-pill.status-completed {
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.status-pill.status-cancelled {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.table-actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-manage-apt {
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-manage-apt:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+/* --------------------------------------------------------------------------
+   Time-Slot Day Agenda / Calendar View
+   -------------------------------------------------------------------------- */
+.agenda-day-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.agenda-band-card {
+  background-color: var(--surface-color);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.agenda-band-card:hover {
+  border-color: #cbd5e1;
+}
+
+.agenda-time-column {
+  background-color: #f8fafc;
+  border-right: 1px solid #f1f5f9;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.agenda-time-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.agenda-time-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  background-color: #e2e8f0;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+}
+
+.agenda-items-container {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+}
+
+.agenda-item-tile {
+  background-color: #f8fafc;
+  border-radius: var(--radius-lg);
+  border: 1px solid #e2e8f0;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  transition: all var(--transition-fast);
+}
+
+.agenda-item-tile:hover {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-xs);
+  transform: translateX(2px);
+}
+
+.agenda-tile-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.agenda-tile-info h4 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.agenda-tile-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.agenda-empty-band {
+  font-size: 13px;
+  color: #94a3b8;
+  font-style: italic;
+  padding: 6px 0;
+}
+
+@media (max-width: 768px) {
+  .agenda-band-card {
+    grid-template-columns: 1fr;
+  }
+  .agenda-time-column {
+    border-right: none;
+    border-bottom: 1px solid #f1f5f9;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px 16px;
+  }
+}

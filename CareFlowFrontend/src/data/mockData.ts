@@ -612,3 +612,161 @@ export const saveStoredDoctors = (doctors: Doctor[]): void => {
     console.error("Failed to save doctors to localStorage", err);
   }
 };
+
+const APPOINTMENTS_STORAGE_KEY = "careflow_appointments_data";
+
+export const INITIAL_APPOINTMENTS: any[] = [
+  {
+    id: "apt-2026-001",
+    patientId: 1,
+    patientName: "Rahul Sharma",
+    patientMrn: "CF-2026-001",
+    patientPhone: "+91 98765 43210",
+    patientGender: "Male",
+    patientAge: 42,
+    doctorId: 1,
+    doctorName: "Dr. Rahul Sharma",
+    doctorSpecialty: "Interventional Cardiology",
+    doctorRoom: "Cardio Suite 204",
+    departmentId: "Cardiology",
+    department: "Cardiology",
+    date: "2026-10-20",
+    time: "10:30 AM",
+    type: "Follow-up",
+    status: "Scheduled",
+    notes: "Post-hypertension therapy review and ECG analysis",
+    createdAt: "2026-10-15T09:00:00.000Z",
+    updatedAt: "2026-10-15T09:00:00.000Z",
+  },
+  {
+    id: "apt-2026-002",
+    patientId: 2,
+    patientName: "Aisha Khan",
+    patientMrn: "CF-2026-002",
+    patientPhone: "+91 98765 43211",
+    patientGender: "Female",
+    patientAge: 31,
+    doctorId: 2,
+    doctorName: "Dr. Ananya Sen",
+    doctorSpecialty: "Cognitive Neurology & Epilepsy",
+    doctorRoom: "Neuro Center 302",
+    departmentId: "Neurology",
+    department: "Neurology",
+    date: "2026-10-20",
+    time: "11:30 AM",
+    type: "Consultation",
+    status: "Confirmed",
+    notes: "Persistent migraine episodes with visual aura",
+    createdAt: "2026-10-16T11:00:00.000Z",
+    updatedAt: "2026-10-16T11:00:00.000Z",
+  },
+  {
+    id: "apt-2026-003",
+    patientId: 3,
+    patientName: "Vikram Malhotra",
+    patientMrn: "CF-2026-003",
+    patientPhone: "+91 98765 43212",
+    patientGender: "Male",
+    patientAge: 58,
+    doctorId: 3,
+    doctorName: "Dr. Vikram Patel",
+    doctorSpecialty: "Hepatobiliary & Pancreatic Medicine",
+    doctorRoom: "Consultation Suite 108",
+    departmentId: "Gastro",
+    department: "Gastro",
+    date: "2026-10-20",
+    time: "02:30 PM",
+    type: "Routine Checkup",
+    status: "Checked-in",
+    notes: "Routine abdominal ultrasound follow-up",
+    createdAt: "2026-10-17T08:30:00.000Z",
+    updatedAt: "2026-10-17T08:30:00.000Z",
+  },
+  {
+    id: "apt-2026-004",
+    patientId: 4,
+    patientName: "Priya Singh",
+    patientMrn: "CF-2026-004",
+    patientPhone: "+91 98765 43213",
+    patientGender: "Female",
+    patientAge: 26,
+    doctorId: 4,
+    doctorName: "Dr. Kabir Malhotra",
+    doctorSpecialty: "Sports Injuries & Joint Arthroscopy",
+    doctorRoom: "Consultation Suite 305",
+    departmentId: "Orthology",
+    department: "Orthology",
+    date: "2026-10-20",
+    time: "03:30 PM",
+    type: "Consultation",
+    status: "In-Progress",
+    notes: "Right knee arthroscopy pre-op evaluation",
+    createdAt: "2026-10-17T14:00:00.000Z",
+    updatedAt: "2026-10-17T14:00:00.000Z",
+  },
+  {
+    id: "apt-2026-005",
+    patientId: 5,
+    patientName: "Mohammed Sameer",
+    patientMrn: "CF-2026-005",
+    patientPhone: "+91 98765 43214",
+    patientGender: "Male",
+    patientAge: 64,
+    doctorId: 5,
+    doctorName: "Dr. Sarah Jenkins",
+    doctorSpecialty: "Adult Multi-System & Preventive Health",
+    doctorRoom: "Consultation Suite 102",
+    departmentId: "General Physician",
+    department: "General Physician",
+    date: "2026-10-19",
+    time: "09:30 AM",
+    type: "Follow-up",
+    status: "Completed",
+    notes: "Annual diabetic metabolic wellness assessment",
+    createdAt: "2026-10-14T10:00:00.000Z",
+    updatedAt: "2026-10-19T10:15:00.000Z",
+  },
+  {
+    id: "apt-2026-006",
+    patientId: 6,
+    patientName: "Neha Verma",
+    patientMrn: "CF-2026-006",
+    patientPhone: "+91 98765 43215",
+    patientGender: "Female",
+    patientAge: 37,
+    doctorId: 6,
+    doctorName: "Dr. Neha Kulkarni",
+    doctorSpecialty: "Neonatal & Child Development",
+    doctorRoom: "Child Wellness Wing 201",
+    departmentId: "Pediatrics",
+    department: "Pediatrics",
+    date: "2026-10-21",
+    time: "10:00 AM",
+    type: "Consultation",
+    status: "Scheduled",
+    notes: "Pediatric wellness examination",
+    createdAt: "2026-10-18T08:00:00.000Z",
+    updatedAt: "2026-10-18T08:00:00.000Z",
+  },
+];
+
+export const getStoredAppointments = (): any[] => {
+  try {
+    const raw = localStorage.getItem(APPOINTMENTS_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(APPOINTMENTS_STORAGE_KEY, JSON.stringify(INITIAL_APPOINTMENTS));
+      return INITIAL_APPOINTMENTS;
+    }
+    return JSON.parse(raw);
+  } catch {
+    return INITIAL_APPOINTMENTS;
+  }
+};
+
+export const saveStoredAppointments = (appointments: any[]): void => {
+  try {
+    localStorage.setItem(APPOINTMENTS_STORAGE_KEY, JSON.stringify(appointments));
+  } catch (err) {
+    console.error("Failed to save appointments to localStorage", err);
+  }
+};
