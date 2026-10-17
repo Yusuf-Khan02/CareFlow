@@ -1,0 +1,47 @@
+.patient-visits-chart {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 20px;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.chart-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+
+  margin-bottom: 4px;
+}
+
+.chart-header p {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.chart-filter {
+  padding: 8px 12px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+
+  background-color: #ffffff;
+
+  font-size: 13px;
+  color: #374151;
+
+  cursor: pointer;
+}
+
+.chart-container {
+  padding: 20px;
+}

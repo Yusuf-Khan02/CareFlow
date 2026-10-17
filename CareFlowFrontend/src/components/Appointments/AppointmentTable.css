@@ -1,0 +1,83 @@
+.appointment-table {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.appointment-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.appointment-table th {
+  padding: 14px 20px;
+
+  background-color: #f8fafc;
+
+  text-align: left;
+
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.appointment-table td {
+  padding: 16px 20px;
+
+  font-size: 14px;
+  color: #475569;
+
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.appointment-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.appointment-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.patient-name {
+  font-weight: 600;
+  color: #111827 !important;
+}
+
+.appointment-status {
+  display: inline-block;
+
+  padding: 6px 10px;
+
+  border-radius: 20px;
+
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.appointment-status.completed {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.appointment-status.waiting {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.appointment-status.in-consultation {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.appointment-status.scheduled {
+  background-color: #f3e8ff;
+  color: #7e22ce;
+}

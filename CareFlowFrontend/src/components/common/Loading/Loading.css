@@ -1,0 +1,135 @@
+/* Spinner Styles */
+.careflow-spinner {
+  display: inline-block;
+  border-radius: var(--radius-full);
+  border-style: solid;
+  border-color: rgba(15, 118, 110, 0.2);
+  border-top-color: var(--primary-color);
+  animation: spin 0.75s linear infinite;
+}
+
+.spinner-sm {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.spinner-md {
+  width: 28px;
+  height: 28px;
+  border-width: 3px;
+}
+
+.spinner-lg {
+  width: 44px;
+  height: 44px;
+  border-width: 4px;
+}
+
+.spinner-white {
+  border-color: rgba(255, 255, 255, 0.2);
+  border-top-color: #ffffff;
+}
+
+.spinner-muted {
+  border-color: rgba(148, 163, 184, 0.2);
+  border-top-color: var(--text-muted);
+}
+
+/* Skeleton Styles */
+.careflow-skeleton {
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
+
+.skeleton-text {
+  height: 14px;
+  width: 100%;
+}
+
+.skeleton-rectangular {
+  height: 80px;
+  width: 100%;
+}
+
+.skeleton-circular {
+  border-radius: var(--radius-full);
+  width: 40px;
+  height: 40px;
+}
+
+.skeleton-card {
+  height: 140px;
+  width: 100%;
+  border-radius: var(--radius-lg);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Page Loader Styles */
+.page-loader-container {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.page-loader-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px;
+  border-radius: var(--radius-xl);
+  background-color: var(--surface-color);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  max-width: 320px;
+  text-align: center;
+}
+
+.page-loader-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--primary-color);
+}
+
+.page-loader-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background-color: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color);
+}
+
+.page-loader-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.page-loader-message {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}

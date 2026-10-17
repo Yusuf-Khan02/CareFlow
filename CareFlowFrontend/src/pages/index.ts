@@ -1,0 +1,11 @@
+export { default as Login } from "./Login";
+export { default as Dashboard } from "./Dashboard";
+export { default as Patients } from "./Patients";
+export { default as Doctors } from "./Doctors";
+export { default as Appointments } from "./Appointments";
+export { default as Queue } from "./Queue";
+export { default as Laboratory } from "./Laboratory";
+export { default as Pharmacy } from "./Pharmacy";
+export { default as PatientDetails } from "./PatientDetails";
+export { default as NotFound } from "./NotFound";
+export { default as AccessDenied } from "./AccessDenied";

@@ -1,0 +1,61 @@
+.patients-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.patients-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+}
+
+.patients-header h1 {
+  margin-bottom: 6px;
+
+  font-size: 28px;
+  font-weight: 700;
+
+  color: var(--text-primary);
+}
+
+.patients-header p {
+  font-size: 14px;
+
+  color: var(--text-secondary);
+}
+
+.add-patient-button {
+  padding: 11px 18px;
+
+  border: none;
+  border-radius: var(--radius-md);
+
+  background-color: var(--primary-color);
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.add-patient-button:hover {
+  background-color: var(--primary-hover);
+
+  transform: translateY(-1px);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.add-patient-button:active {
+  transform: translateY(0);
+}

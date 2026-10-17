@@ -1,0 +1,119 @@
+.module-placeholder-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.module-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.module-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.module-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.phase-badge {
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid var(--accent-color);
+}
+
+.placeholder-banner-card {
+  background-color: var(--surface-color);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.placeholder-icon-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-lg);
+  background: var(--accent-gradient);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 8px 20px rgba(15, 118, 110, 0.25);
+}
+
+.placeholder-content {
+  flex: 1;
+}
+
+.placeholder-content h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.placeholder-content p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 680px;
+  margin-bottom: 20px;
+}
+
+.placeholder-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.tech-tag {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: var(--radius-md);
+  background-color: var(--surface-hover);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.placeholder-cta-btn {
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  background: var(--accent-gradient);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.placeholder-cta-btn:hover {
+  background: var(--accent-gradient-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 768px) {
+  .placeholder-banner-card {
+    flex-direction: column;
+    padding: 24px;
+    gap: 20px;
+  }
+}

@@ -1,0 +1,138 @@
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeInOverlay 0.2s ease-out;
+}
+
+.dialog-card {
+  background: var(--surface-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  max-width: 440px;
+  width: 100%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid var(--border-color);
+}
+
+.dialog-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.dialog-icon-danger {
+  background-color: var(--danger-bg);
+}
+
+.dialog-icon-warning {
+  background-color: var(--warning-bg);
+}
+
+.dialog-icon-primary {
+  background-color: var(--primary-light);
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dialog-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dialog-message {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.dialog-btn {
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.dialog-btn-cancel {
+  background-color: var(--surface-hover);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.dialog-btn-cancel:hover {
+  background-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dialog-btn-primary {
+  background: var(--accent-gradient);
+  color: #ffffff;
+}
+
+.dialog-btn-primary:hover {
+  background: var(--accent-gradient-hover);
+}
+
+.dialog-btn-danger {
+  background-color: var(--danger-color);
+  color: #ffffff;
+}
+
+.dialog-btn-danger:hover {
+  background-color: #dc2626;
+}
+
+.dialog-btn-warning {
+  background-color: var(--warning-color);
+  color: #ffffff;
+}
+
+.dialog-btn-warning:hover {
+  background-color: #d97706;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
