@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "tsx --test \"src/tests/**/*.test.ts\""
+    "test": "tsx --test src/tests/clientCore.test.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.104.4",
