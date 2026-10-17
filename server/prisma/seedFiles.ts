@@ -5,7 +5,7 @@ import prisma from "../src/config/db.js";
 
 const STORAGE_DIR = path.resolve(process.cwd(), "storage", "private");
 
-async function seedMedicalFiles() {
+export async function seedMedicalFiles() {
   console.log("Seeding realistic synthetic medical files and private storage records...");
 
   if (!fs.existsSync(STORAGE_DIR)) {
@@ -100,10 +100,15 @@ async function seedMedicalFiles() {
   }
 
   console.log("✅ Synthetic medical files seeded successfully in private storage!");
-  process.exit(0);
 }
 
-seedMedicalFiles().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+if (process.argv[1]?.includes("seedFiles")) {
+  seedMedicalFiles()
+    .catch((err) => {
+      console.error(err);
+      process.exit(1);
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    });
+}

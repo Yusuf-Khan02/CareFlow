@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-async function main() {
+export async function seedPharmacy() {
   console.log("💊 Seeding Pharmacy Formulary, Batches, and Inventory Ledgers...");
 
   const formularyData = [
@@ -288,11 +288,13 @@ async function main() {
   console.log("✅ Pharmacy Formulary, active stock batches, and movement ledger seeded!");
 }
 
-main()
-  .catch((e) => {
-    console.error("❌ Pharmacy seed error:", e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+if (process.argv[1]?.includes("seedPharmacy")) {
+  seedPharmacy()
+    .catch((e) => {
+      console.error("❌ Pharmacy seed error:", e);
+      process.exit(1);
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    });
+}

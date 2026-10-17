@@ -1,11 +1,35 @@
-import { describe, it, before } from "node:test";
+import http from "node:http";
+import { describe, it, before, after } from "node:test";
 import assert from "node:assert/strict";
+import createApp from "../../src/app.js";
 
 describe("API Integration & Multi-Tenant Partition Isolation", () => {
-  const BASE_URL = "http://localhost:5000/api/v1";
+  let serverInstance: http.Server | null = null;
+  let BASE_URL = process.env.TEST_API_URL || "http://127.0.0.1:5000/api/v1";
   let authToken = "";
 
   before(async () => {
+    // If an external server is already running, use it; otherwise start an ephemeral test server
+    let externalRunning = false;
+    try {
+      const ping = await fetch(`${BASE_URL}/health`, { signal: AbortSignal.timeout(500) });
+      if (ping.ok) externalRunning = true;
+    } catch {
+      externalRunning = false;
+    }
+
+    if (!externalRunning) {
+      const app = createApp();
+      serverInstance = http.createServer(app);
+      await new Promise<void>((resolve) => {
+        serverInstance!.listen(0, "127.0.0.1", () => {
+          const addr = serverInstance!.address() as any;
+          BASE_URL = `http://127.0.0.1:${addr.port}/api/v1`;
+          resolve();
+        });
+      });
+    }
+
     // Authenticate as Central Hospital Admin
     const res = await fetch(`${BASE_URL}/auth/login`, {
       method: "POST",
@@ -21,6 +45,12 @@ describe("API Integration & Multi-Tenant Partition Isolation", () => {
     assert.ok(json.success);
     assert.ok(json.data.token);
     authToken = json.data.token;
+  });
+
+  after(async () => {
+    if (serverInstance) {
+      await new Promise<void>((resolve) => serverInstance!.close(() => resolve()));
+    }
   });
 
   it("should return healthy status and database latency from /health", async () => {

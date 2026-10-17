@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-async function main() {
+export async function seedLab() {
   console.log("🧪 Seeding Diagnostic Laboratory Orders & Verified Results...");
 
   const patients = await prisma.patient.findMany({ take: 6 });
@@ -236,11 +236,13 @@ async function main() {
   console.log("✅ Diagnostic Laboratory orders and verified results successfully seeded!");
 }
 
-main()
-  .catch((e) => {
-    console.error("❌ Lab seed error:", e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+if (process.argv[1]?.includes("seedLab")) {
+  seedLab()
+    .catch((e) => {
+      console.error("❌ Lab seed error:", e);
+      process.exit(1);
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    });
+}

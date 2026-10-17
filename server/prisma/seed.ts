@@ -1,5 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { seedTenants } from "./seedTenants.js";
+import { seedPharmacy } from "./seedPharmacy.js";
+import { seedLab } from "./seedLab.js";
+import { seedBeds } from "./seedBeds.js";
+import { seedBilling } from "./seedBilling.js";
+import { seedMedicalFiles } from "./seedFiles.js";
 
 const prisma = new PrismaClient();
 
@@ -424,7 +430,26 @@ async function main() {
   }
 
   console.log("✅ 6 Synthetic Patients, Vitals, Appointments, and Queue Tokens seeded!");
-  console.log("🎉 CareFlow SQL Database is fully initialized and seeded!");
+
+  // 7. Seed Multi-Tenancy Organizations & Central/West Metro Tenants
+  await seedTenants();
+
+  // 8. Seed Pharmacy Formulary, Batches & Movements
+  await seedPharmacy();
+
+  // 9. Seed Diagnostic Laboratory Orders & Results
+  await seedLab();
+
+  // 10. Seed Inpatient Wards, Rooms, Beds & Admissions
+  await seedBeds();
+
+  // 11. Seed Hospital Invoices, Line Items & Payments
+  await seedBilling();
+
+  // 12. Seed Document Vault & Private Storage Files
+  await seedMedicalFiles();
+
+  console.log("🎉 CareFlow SQL Database is fully initialized and seeded across all clinical domains!");
 }
 
 main()
