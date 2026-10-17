@@ -8,54 +8,101 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  width: 100%;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.patients-header h1 {
-  margin-bottom: 6px;
-
-  font-size: 28px;
-  font-weight: 700;
-
+.patients-title {
+  font-size: 24px;
+  font-weight: 800;
   color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
-.patients-header p {
+.patients-subtitle {
   font-size: 14px;
-
   color: var(--text-secondary);
+  margin-top: 4px;
 }
 
 .add-patient-button {
-  padding: 11px 18px;
-
-  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
   border-radius: var(--radius-md);
-
-  background-color: var(--primary-color);
-
+  background: var(--accent-gradient);
   color: #ffffff;
-
-  font-size: 14px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition:
-    background-color 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  font-size: 13.5px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
+  transition: all var(--transition-fast);
 }
 
 .add-patient-button:hover {
-  background-color: var(--primary-hover);
-
+  background: var(--accent-gradient-hover);
+  box-shadow: 0 6px 16px rgba(15, 118, 110, 0.35);
   transform: translateY(-1px);
-
-  box-shadow: var(--shadow-sm);
 }
 
-.add-patient-button:active {
-  transform: translateY(0);
+/* Stat Cards Bar */
+.patient-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.patient-stat-card {
+  background-color: var(--surface-color);
+  border-radius: var(--radius-xl);
+  padding: 18px 20px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.p-stat-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.p-stat-value {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.p-stat-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.card-active {
+  border-left: 4px solid var(--success-color);
+}
+
+.card-critical {
+  border-left: 4px solid var(--danger-color);
+}
+
+.card-discharged {
+  border-left: 4px solid #94a3b8;
+}
+
+@media (max-width: 900px) {
+  .patient-stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .patient-stats-bar {
+    grid-template-columns: 1fr;
+  }
 }

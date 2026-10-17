@@ -5,3 +5,5 @@ export { default as Skeleton } from "./Loading/Skeleton";
 export { default as PageLoader } from "./Loading/PageLoader";
 export { default as EmptyState } from "./EmptyState/EmptyState";
 export { default as ErrorState } from "./ErrorState/ErrorState";
+export { default as InputField } from "./forms/InputField";
+export { default as SelectField } from "./forms/SelectField";

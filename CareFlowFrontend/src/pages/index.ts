@@ -2,6 +2,7 @@ export { default as Login } from "./Login";
 export { default as Dashboard } from "./Dashboard";
 export { default as Patients } from "./Patients";
 export { default as Doctors } from "./Doctors";
+export { default as DoctorDetails } from "./DoctorDetails";
 export { default as Appointments } from "./Appointments";
 export { default as Queue } from "./Queue";
 export { default as Laboratory } from "./Laboratory";

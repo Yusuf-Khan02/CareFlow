@@ -4,12 +4,13 @@ import {
   Login,
   Dashboard,
   Patients,
+  PatientDetails,
   Doctors,
+  DoctorDetails,
   Appointments,
   Queue,
   Laboratory,
   Pharmacy,
-  PatientDetails,
   NotFound,
   AccessDenied,
 } from "../pages";
@@ -27,9 +28,16 @@ const AppRoutes = () => {
       {/* Main Application Layout */}
       <Route element={<MainLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
+        
+        {/* Patient Management Routes */}
         <Route path="/patients" element={<Patients />} />
         <Route path="/patients/:id" element={<PatientDetails />} />
+
+        {/* Doctor & Staff Management Routes */}
         <Route path="/doctors" element={<Doctors />} />
+        <Route path="/doctors/:id" element={<DoctorDetails />} />
+
+        {/* Operational Modules */}
         <Route path="/appointments" element={<Appointments />} />
         <Route path="/queue" element={<Queue />} />
         <Route path="/laboratory" element={<Laboratory />} />

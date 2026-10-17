@@ -17,7 +17,7 @@
 |-------|------|--------|----------|
 | 0 | Planning & Setup | ✅ Done | █████████████████████ 100% |
 | 1 | Frontend Foundation | ✅ Done | █████████████████████ 100% |
-| 2 | Patient & Staff UI | 🟡 In Progress | ██████░░░░░░░░░░░░░░░ 30% |
+| 2 | Patient & Staff UI | ✅ Done | █████████████████████ 100% |
 | 3 | Backend Foundation | ⬜ Not Started | ░░░░░░░░░░░░░░░░░░░░░ 0% |
 | 4 | Database & API Integration | ⬜ Not Started | ░░░░░░░░░░░░░░░░░░░░░ 0% |
 | 5 | Authentication & Authorization | ⬜ Not Started | ░░░░░░░░░░░░░░░░░░░░░ 0% |
@@ -34,7 +34,7 @@
 | 16 | Testing & Polish | ⬜ Not Started | ░░░░░░░░░░░░░░░░░░░░░ 0% |
 | 17 | Docker & Deployment | ⬜ Not Started | ░░░░░░░░░░░░░░░░░░░░░ 0% |
 
-**Overall Progress: ~10%** — Phase 0 & Phase 1 completed; Phase 2 in progress.
+**Overall Progress: ~18%** — Phase 0, 1, and 2 completed; Next: Phase 3 (Backend Foundation).
 
 ---
 
@@ -42,6 +42,7 @@
 
 | Date | Phase | What Changed |
 |------|-------|-------------|
+| 2026-10-17 | Phase 2 | Completed Phase 2 — built full Patient Directory with stats cards, sortable table, pagination, PatientModal for Add/Edit, comprehensive PatientDetails with vitals and consultation history, full Doctors directory with duty badges, and DoctorDetails weekly schedule rota |
 | 2026-10-17 | Phase 1 | Completed Phase 1 — built Login UI with quick demo role prefill, Toast notification system, ConfirmationDialog, Spinner/Skeleton/PageLoader, EmptyState, ErrorState, enhanced Navbar with live status, alerts panel, user profile menu, responsive mobile drawer sidebar with icons, 404 & 403 pages |
 | 2026-10-17 | Phase 0, 1, 2 | Initial audit — marked existing work as done |
 
@@ -852,9 +853,9 @@ Each phase ends with a working, tested milestone. Tasks are tracked with checkbo
 
 ---
 
-### Phase 2 — Patient & Staff UI 🟡
+### Phase 2 — Patient & Staff UI ✅
 
-> **Status: IN PROGRESS** | **Deliverable:** Usable frontend prototypes for patient and staff modules.
+> **Status: DONE** | **Deliverable:** Usable frontend prototypes for patient and staff modules.
 
 #### 2.1 Patient List Page
 - [x] Build `Patients` page with header and "Add Patient" button
@@ -868,42 +869,42 @@ Each phase ends with a working, tested milestone. Tasks are tracked with checkbo
 #### 2.2 Patient Details Page
 - [x] Build `PatientDetails` page (accessible via `/patients/:id`)
 - [x] Back-to-patients navigation button
-- [ ] Display full patient info card (name, age, gender, phone, department, status)
-- [ ] Show appointment history section (synthetic)
-- [ ] Show visit history section (synthetic)
+- [x] Display full patient info card (name, age, gender, phone, department, status)
+- [x] Show appointment history section (synthetic)
+- [x] Show visit history section (synthetic)
 
 #### 2.3 Add/Edit Patient Form
-- [ ] Build `AddPatient` page/modal with form fields
-- [ ] Form fields: name, age, gender, phone, department
-- [ ] Client-side form validation
-- [ ] Add to synthetic patient list (local state)
-- [ ] Build `EditPatient` page/modal
+- [x] Build `AddPatient` page/modal with form fields
+- [x] Form fields: name, age, gender, phone, department
+- [x] Client-side form validation
+- [x] Add to synthetic patient list (local state)
+- [x] Build `EditPatient` page/modal
 
 #### 2.4 Patient Table Enhancements
-- [ ] Pagination component
-- [ ] Sortable columns (click column header to sort)
-- [ ] Status badges with color coding
-- [ ] Row click navigates to patient details
-- [ ] Action buttons (view, edit, delete)
+- [x] Pagination component
+- [x] Sortable columns (click column header to sort)
+- [x] Status badges with color coding
+- [x] Row click navigates to patient details
+- [x] Action buttons (view, edit, delete)
 
 #### 2.5 Doctor/Staff List Page
-- [ ] Build full `Doctors` page (not just placeholder)
-- [ ] Doctor cards or table with: name, specialty, department, status
-- [ ] Synthetic doctor data
-- [ ] Search and filter by specialty/department
+- [x] Build full `Doctors` page (not just placeholder)
+- [x] Doctor cards or table with: name, specialty, department, status
+- [x] Synthetic doctor data
+- [x] Search and filter by specialty/department
 
 #### 2.6 Doctor Details & Schedule
-- [ ] Build `DoctorDetails` page
-- [ ] Show doctor profile info
-- [ ] Show weekly schedule/availability (synthetic)
-- [ ] Route: `/doctors/:id`
+- [x] Build `DoctorDetails` page
+- [x] Show doctor profile info
+- [x] Show weekly schedule/availability (synthetic)
+- [x] Route: `/doctors/:id`
 
 #### 2.7 Reusable Form Controls
-- [ ] Text input component
-- [ ] Select/dropdown component
-- [ ] Date picker component
-- [ ] Form group/field wrapper with label + error
-- [ ] Move `Patient` type to `types/` directory
+- [x] Text input component
+- [x] Select/dropdown component
+- [x] Date picker component
+- [x] Form group/field wrapper with label + error
+- [x] Move `Patient` type to `types/` directory
 
 ---
 
