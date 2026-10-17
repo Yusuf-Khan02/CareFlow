@@ -42,6 +42,7 @@
 
 | Date | Phase | What Changed |
 |------|-------|-------------|
+| 2026-10-17 | Architecture | Transitioned database stack from NoSQL/Mongoose to Relational SQL with PostgreSQL/SQLite & Prisma ORM, including web-based Prisma Studio Database Management |
 | 2026-10-17 | Phase 2 | Completed Phase 2 — built full Patient Directory with stats cards, sortable table, pagination, PatientModal for Add/Edit, comprehensive PatientDetails with vitals and consultation history, full Doctors directory with duty badges, and DoctorDetails weekly schedule rota |
 | 2026-10-17 | Phase 1 | Completed Phase 1 — built Login UI with quick demo role prefill, Toast notification system, ConfirmationDialog, Spinner/Skeleton/PageLoader, EmptyState, ErrorState, enhanced Navbar with live status, alerts panel, user profile menu, responsive mobile drawer sidebar with icons, 404 & 403 pages |
 | 2026-10-17 | Phase 0, 1, 2 | Initial audit — marked existing work as done |
@@ -454,13 +455,14 @@ Start with the smallest stack that can support the first milestone. Add advanced
 - Node.js
 - Express
 - TypeScript
-- Mongoose
+- Prisma ORM (Type-safe SQL query client and migration engine)
 - Zod or another schema-validation library
 - Centralized error handling
 - Structured logging
 
 ### Database and infrastructure
-- MongoDB Atlas for a learning environment, with synthetic data
+- PostgreSQL (Production & Local) / SQLite (Zero-config local fallback), managed via Prisma ORM
+- Prisma Studio for visual web-based SQL database management (`npx prisma studio`)
 - Redis only when caching, distributed coordination, or queues are needed
 - Socket.IO for real-time queue updates
 - BullMQ for background jobs, with Redis
@@ -585,48 +587,40 @@ Build the first screens with synthetic data. Then connect each screen to its API
 
 ---
 
-## 8. Database Design — Initial Entities
+## 8. Database Design — SQL Relational Tables (Prisma ORM)
 
-The exact schemas will be designed when each module is implemented. The following is a planning inventory, not a requirement to create all collections immediately.
+CareFlow uses a relational SQL database architecture (PostgreSQL / SQLite for local development) managed through Prisma ORM.
 
-| Entity/collection | Purpose |
-|---|---|
-| organizations | Hospital/tenant records |
-| users | Login identities and account status |
-| roles/permissions | Authorization rules, if not embedded/configured |
-| staffProfiles | Staff-specific details |
-| patients | Demographic/contact data and patient identifier |
-| departments | Hospital departments and specialties |
-| doctorSchedules | Availability and schedule exceptions |
-| appointments | Bookings, status, and schedule references |
-| queueEntries | Tokens and queue state |
-| encounters | Visits and consultation workflow |
-| clinicalNotes | Clinical documentation, if separated from encounters |
-| prescriptions | Prescribed medication instructions |
-| labOrders | Requested laboratory tests |
-| labResults | Result values, notes, and review state |
-| medicines | Medicine/product catalogue |
-| inventoryBatches | Stock, batch, expiry, and supplier references |
-| inventoryMovements | Receipts, dispensing, and adjustments |
-| wards/rooms/beds | Bed and location inventory |
-| admissions | Admission, transfer, and discharge records |
-| invoices | Billable items and totals |
-| payments | Payment records and reconciliation state |
-| documents | Metadata for private stored files |
-| notifications | In-app notification state |
-| auditLogs | Important user/system actions |
-| backgroundJobs | Usually managed by the queue library rather than a custom collection |
+| SQL Table | Purpose | Primary Keys & Foreign Keys |
+|---|---|---|
+| `organizations` | Hospital / tenant metadata | `id` (PK) |
+| `users` | Auth accounts & login credentials | `id` (PK), `organizationId` (FK) |
+| `departments` | Hospital specialties & clinic suites | `id` (PK), `organizationId` (FK) |
+| `doctors` | Physician profiles, specialties, fees | `id` (PK), `departmentId` (FK), `userId` (FK) |
+| `doctor_schedules` | Weekly shift availability & slots | `id` (PK), `doctorId` (FK) |
+| `patients` | Demographic, contact & admission records | `id` (PK), `mrn` (Unique), `departmentId` (FK), `doctorAssignedId` (FK) |
+| `patient_vitals` | Time-stamped clinical vitals (BP, HR, SpO2) | `id` (PK), `patientId` (FK) |
+| `appointments` | Bookings, status & schedule references | `id` (PK), `patientId` (FK), `doctorId` (FK), `departmentId` (FK) |
+| `queue_tokens` | Live token states, priority, counters | `id` (PK), `patientId` (FK), `doctorId` (FK), `departmentId` (FK) |
+| `consultations` | Medical visit records, clinical notes | `id` (PK), `patientId` (FK), `doctorId` (FK), `appointmentId` (FK) |
+| `prescriptions` | Medication dosage, frequency, duration | `id` (PK), `consultationId` (FK), `patientId` (FK), `doctorId` (FK) |
+| `lab_orders` | Diagnostic lab test orders & statuses | `id` (PK), `patientId` (FK), `doctorId` (FK) |
+| `lab_results` | Biochemical result values & verified ranges | `id` (PK), `labOrderId` (FK) |
+| `medicines` | Pharmacy formulary catalogue | `id` (PK) |
+| `inventory_batches`| Stock, batch number, expiry date | `id` (PK), `medicineId` (FK) |
+| `inventory_movements`| Dispensing ledger, receipts, adjustments | `id` (PK), `medicineId` (FK), `prescriptionId` (FK) |
+| `wards_and_beds` | Ward, room & bed occupancy states | `id` (PK), `departmentId` (FK), `currentPatientId` (FK) |
+| `admissions` | Inpatient admission & discharge dates | `id` (PK), `patientId` (FK), `bedId` (FK) |
+| `invoices` | Patient billable items & totals | `id` (PK), `patientId` (FK), `consultationId` (FK) |
+| `payments` | Transaction records & reconciliation | `id` (PK), `invoiceId` (FK) |
+| `audit_logs` | Append-only security & operational audit trail| `id` (PK), `userId` (FK) |
 
-### Data modeling principles
-- Use stable IDs and references where appropriate.
-- Store timestamps consistently; display them in the hospital's configured timezone.
-- Add indexes based on real query patterns.
-- Validate data on the server.
-- Use explicit status enums and documented state transitions.
-- Avoid embedding large files in MongoDB documents.
-- Use transactions or other concurrency-safe approaches where a workflow needs multiple related changes to succeed together.
-- Define tenant scope and access rules before multi-tenant modules are exposed.
-- Avoid collecting fields that the application does not need.
+### Relational Data modeling principles
+- Strict Referential Integrity: Enforce foreign key constraints with cascading or protective delete policies.
+- Type-Safe Queries: Prisma ORM generates TypeScript types directly from the schema (`PrismaClient`).
+- Database Migrations: Track all database schema changes with versioned SQL migrations (`prisma migrate dev`).
+- Visual Database Management: Integrated web GUI via Prisma Studio (`npx prisma studio`) for real-time inspection and data management.
+- Transactional Safety: Use Prisma interactive transactions (`prisma.$transaction`) for workflows like appointment booking and dispensing where multiple tables must be updated atomically.
 
 ---
 
@@ -915,7 +909,7 @@ Each phase ends with a working, tested milestone. Tasks are tracked with checkbo
 #### 3.1 Server Setup
 - [ ] Create `server/` directory with Express + TypeScript
 - [ ] Configure `tsconfig.json` for server
-- [ ] Install dependencies: express, cors, dotenv, mongoose
+- [ ] Install dependencies: express, cors, dotenv, @prisma/client, prisma
 - [ ] Create `server.ts` entry point
 - [ ] Create `app.ts` with Express setup
 
@@ -930,26 +924,30 @@ Each phase ends with a working, tested milestone. Tasks are tracked with checkbo
 - [ ] Add request-size limits
 
 #### 3.3 Project Config
-- [ ] Add `.gitignore` for server (node_modules, .env, dist)
-- [ ] Add `npm` scripts: `dev`, `build`, `start`
-- [ ] Add nodemon or tsx for dev hot-reloading
+- [ ] Add `.gitignore` for server (node_modules, .env, dist, *.db)
+- [ ] Add `npm` scripts: `dev`, `build`, `start`, `db:studio`, `db:push`, `db:seed`
+- [ ] Add tsx for dev hot-reloading
 
 ---
 
-### Phase 4 — Database & API Integration ⬜
+### Phase 4 — SQL Database & API Integration ⬜
 
-> **Status: NOT STARTED** | **Deliverable:** Data persists in MongoDB and appears in the UI.
+> **Status: NOT STARTED** | **Deliverable:** Relational SQL database managed via Prisma ORM with Prisma Studio GUI.
 
-#### 4.1 Database Connection
-- [ ] Connect to MongoDB Atlas (synthetic data only)
-- [ ] Create connection utility with retry logic
-- [ ] Add connection error handling
+#### 4.1 SQL Database & Prisma Setup
+- [ ] Setup Prisma ORM with PostgreSQL / SQLite local fallback
+- [ ] Configure `DATABASE_URL` in `.env`
+- [ ] Run Prisma migration / push schema to SQL database
+- [ ] Enable Prisma Studio for visual SQL management (`npm run db:studio`)
+- [ ] Create database seed script (`prisma/seed.ts`) with synthetic records
 
-#### 4.2 Core Models
-- [ ] Create `User` model (email, passwordHash, role, status)
-- [ ] Create `Patient` model (name, age, gender, phone, department, status, patientId)
-- [ ] Create `Department` model (name, description, head)
-- [ ] Create `StaffProfile` model (userId, specialty, department, availability)
+#### 4.2 SQL Relational Schema (Prisma)
+- [ ] `User` model (email, passwordHash, role, status)
+- [ ] `Department` model (name, description, suite)
+- [ ] `Doctor` model (name, title, specialty, departmentId, room, fee, rating, bio)
+- [ ] `DoctorSchedule` model (doctorId, day, shifts, slotsRemaining, isAvailable)
+- [ ] `Patient` model (mrn, name, age, gender, phone, email, address, departmentId, status, bloodGroup)
+- [ ] `PatientVital` model (patientId, bloodPressure, heartRate, temperature, spO2, recordedAt)
 
 #### 4.3 Patient CRUD API
 - [ ] `POST /api/v1/patients` — create patient

@@ -26,3 +26,9 @@ lerna-debug.log*
 .idea
 .DS_Store
 Thumbs.db
+
+# SQLite local database files
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3

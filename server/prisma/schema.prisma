@@ -1,0 +1,283 @@
+// CareFlow Smart Hospital Operations Platform - Relational SQL Schema
+// Generator & Datasource configuration
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ----------------------------------------------------
+// 1. ORGANIZATIONS & TENANTS
+// ----------------------------------------------------
+model Organization {
+  id          String       @id @default(uuid())
+  name        String
+  code        String       @unique
+  address     String?
+  phone       String?
+  email       String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  users       User[]
+  departments Department[]
+  patients    Patient[]
+
+  @@map("organizations")
+}
+
+// ----------------------------------------------------
+// 2. USERS & AUTHENTICATION
+// ----------------------------------------------------
+model User {
+  id             String        @id @default(uuid())
+  email          String        @unique
+  passwordHash   String
+  name           String
+  role           String        @default("Staff") // Admin, Doctor, Nurse, Receptionist, LabTech, Pharmacist, Patient
+  status         String        @default("Active") // Active, Suspended, Inactive
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  doctorProfile  Doctor?
+  auditLogs      AuditLog[]
+
+  @@map("users")
+}
+
+// ----------------------------------------------------
+// 3. DEPARTMENTS & SPECIALTIES
+// ----------------------------------------------------
+model Department {
+  id             String        @id @default(uuid())
+  name           String        @unique
+  code           String        @unique
+  description    String?
+  suite          String?
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  doctors        Doctor[]
+  patients       Patient[]
+  appointments   Appointment[]
+  queueTokens    QueueToken[]
+
+  @@map("departments")
+}
+
+// ----------------------------------------------------
+// 4. DOCTORS & CLINICAL STAFF
+// ----------------------------------------------------
+model Doctor {
+  id              Int              @id @default(autoincrement())
+  userId          String?          @unique
+  user            User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name            String
+  title           String           // e.g. "Senior Consultant Cardiologist"
+  qualification   String           // e.g. "MBBS, MD, DM"
+  specialty       String           // e.g. "Interventional Cardiology"
+  departmentId    String
+  department      Department       @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  room            String           // e.g. "Consultation Suite 101"
+  email           String           @unique
+  phone           String
+  status          String           @default("On Duty") // On Duty, In Consultation, On Leave, Off Duty
+  rating          Float            @default(5.0)
+  consultationFee Float            @default(500.0)
+  experienceYears Int              @default(5)
+  bio             String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  schedules       DoctorSchedule[]
+  assignedPatients Patient[]
+  appointments    Appointment[]
+  consultations   Consultation[]
+  queueTokens     QueueToken[]
+  prescriptions   Prescription[]
+
+  @@map("doctors")
+}
+
+model DoctorSchedule {
+  id             String   @id @default(uuid())
+  doctorId       Int
+  doctor         Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  day            String   // Monday, Tuesday, ...
+  shifts         String   // e.g. "09:00 AM - 01:00 PM"
+  isAvailable    Boolean  @default(true)
+  slotsRemaining Int      @default(6)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("doctor_schedules")
+}
+
+// ----------------------------------------------------
+// 5. PATIENTS & CLINICAL VITALS
+// ----------------------------------------------------
+model Patient {
+  id                Int            @id @default(autoincrement())
+  mrn               String         @unique // Medical Record Number (e.g. CF-2026-001)
+  name              String
+  age               Int
+  gender            String         // Male, Female, Other
+  phone             String
+  email             String?
+  address           String?
+  departmentId      String
+  department        Department     @relation(fields: [departmentId], references: [id])
+  status            String         @default("Active") // Active, Critical, Discharged
+  bloodGroup        String         @default("O+")
+  emergencyName     String?
+  emergencyRelation String?
+  emergencyPhone    String?
+  allergies         String?        // Comma-separated list or JSON
+  doctorAssignedId  Int?
+  doctorAssigned    Doctor?        @relation(fields: [doctorAssignedId], references: [id], onDelete: SetNull)
+  admissionDate     String?
+  organizationId    String?
+  organization      Organization?  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  vitals            PatientVital[]
+  appointments      Appointment[]
+  consultations     Consultation[]
+  queueTokens       QueueToken[]
+  prescriptions     Prescription[]
+
+  @@map("patients")
+}
+
+model PatientVital {
+  id            String   @id @default(uuid())
+  patientId     Int
+  patient       Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  bloodPressure String   // e.g. "120/80 mmHg"
+  heartRate     Int      // BPM
+  temperature   String   // e.g. "98.6 °F"
+  spO2          Int      // percentage e.g. 98
+  recordedAt    DateTime @default(now())
+
+  @@map("patient_vitals")
+}
+
+// ----------------------------------------------------
+// 6. APPOINTMENTS & BOOKINGS
+// ----------------------------------------------------
+model Appointment {
+  id             String        @id @default(uuid())
+  patientId      Int
+  patient        Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctorId       Int
+  doctor         Doctor        @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  departmentId   String
+  department     Department    @relation(fields: [departmentId], references: [id])
+  date           String        // YYYY-MM-DD
+  time           String        // e.g. "10:30 AM"
+  type           String        @default("Consultation") // Consultation, Follow-up, Emergency, Routine Checkup
+  status         String        @default("Scheduled") // Scheduled, Confirmed, Checked-in, In-Progress, Completed, Cancelled
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  consultation   Consultation?
+
+  @@map("appointments")
+}
+
+// ----------------------------------------------------
+// 7. REAL-TIME QUEUE TOKENS
+// ----------------------------------------------------
+model QueueToken {
+  id           String      @id @default(uuid())
+  tokenNumber  String      // e.g. "A-101"
+  patientId    Int
+  patient      Patient     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctorId     Int?
+  doctor       Doctor?     @relation(fields: [doctorId], references: [id], onDelete: SetNull)
+  departmentId String
+  department   Department  @relation(fields: [departmentId], references: [id])
+  status       String      @default("Waiting") // Waiting, Called, In-Consultation, Completed, Skipped
+  priority     String      @default("Normal") // Normal, Urgent, Emergency
+  calledAt     DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@map("queue_tokens")
+}
+
+// ----------------------------------------------------
+// 8. CONSULTATIONS & CLINICAL NOTES
+// ----------------------------------------------------
+model Consultation {
+  id             String         @id @default(uuid())
+  appointmentId  String?        @unique
+  appointment    Appointment?   @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  patientId      Int
+  patient        Patient        @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctorId       Int
+  doctor         Doctor         @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  date           String
+  chiefComplaint String
+  diagnosis      String
+  treatment      String
+  clinicalNotes  String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  prescriptions  Prescription[]
+
+  @@map("consultations")
+}
+
+// ----------------------------------------------------
+// 9. PRESCRIPTIONS & MEDICATIONS
+// ----------------------------------------------------
+model Prescription {
+  id             String        @id @default(uuid())
+  consultationId String?
+  consultation   Consultation? @relation(fields: [consultationId], references: [id], onDelete: SetNull)
+  patientId      Int
+  patient        Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctorId       Int
+  doctor         Doctor        @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  medicationName String
+  dosage         String        // e.g. "500mg"
+  route          String        @default("Oral") // Oral, IV, Topical
+  frequency      String        // e.g. "Twice daily after meals"
+  duration       String        // e.g. "5 days"
+  instructions   String?
+  status         String        @default("Active") // Active, Dispensed, Cancelled
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@map("prescriptions")
+}
+
+// ----------------------------------------------------
+// 10. SYSTEM AUDIT LOGS
+// ----------------------------------------------------
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String   // CREATE, UPDATE, DELETE, LOGIN, EXPORT
+  entityName String   // Patient, Doctor, Appointment, Prescription
+  entityId   String?
+  details    String?  // JSON metadata or change summary
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@map("audit_logs")
+}
