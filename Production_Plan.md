@@ -18,7 +18,7 @@
 | 0 | Planning & Setup | ✅ Done | █████████████████████ 100% |
 | 1 | Frontend Foundation | ✅ Done | █████████████████████ 100% |
 | 2 | Patient & Staff UI | ✅ Done | █████████████████████ 100% |
-| 3 | Backend Foundation | ⬜ Not Started | ░░░░░░░░░░░░░░░░░░░░░ 0% |
+| 3 | Backend Foundation | ✅ Done | █████████████████████ 100% |
 | 4 | Database & API Integration | ⬜ Not Started | ░░░░░░░░░░░░░░░░░░░░░ 0% |
 | 5 | Authentication & Authorization | ⬜ Not Started | ░░░░░░░░░░░░░░░░░░░░░ 0% |
 | 6 | Appointments | ⬜ Not Started | ░░░░░░░░░░░░░░░░░░░░░ 0% |
@@ -34,7 +34,7 @@
 | 16 | Testing & Polish | ⬜ Not Started | ░░░░░░░░░░░░░░░░░░░░░ 0% |
 | 17 | Docker & Deployment | ⬜ Not Started | ░░░░░░░░░░░░░░░░░░░░░ 0% |
 
-**Overall Progress: ~18%** — Phase 0, 1, and 2 completed; Next: Phase 3 (Backend Foundation).
+**Overall Progress: ~24%** — Phase 0, 1, 2, and 3 completed; Next: Phase 4 (SQL Database & API Integration).
 
 ---
 
@@ -42,6 +42,7 @@
 
 | Date | Phase | What Changed |
 |------|-------|-------------|
+| 2026-10-17 | Phase 3 | Completed Phase 3 — built Express + TypeScript backend with modular architecture, typed environment configuration, structured colorized logger, Zod schema validation middleware, robust centralized error handling for AppErrors/Zod/Prisma codes, and operational `/api/v1/health` check measuring active SQL database latency |
 | 2026-10-17 | Architecture | Transitioned database stack from NoSQL/Mongoose to Relational SQL with PostgreSQL/SQLite & Prisma ORM, including web-based Prisma Studio Database Management |
 | 2026-10-17 | Phase 2 | Completed Phase 2 — built full Patient Directory with stats cards, sortable table, pagination, PatientModal for Add/Edit, comprehensive PatientDetails with vitals and consultation history, full Doctors directory with duty badges, and DoctorDetails weekly schedule rota |
 | 2026-10-17 | Phase 1 | Completed Phase 1 — built Login UI with quick demo role prefill, Toast notification system, ConfirmationDialog, Spinner/Skeleton/PageLoader, EmptyState, ErrorState, enhanced Navbar with live status, alerts panel, user profile menu, responsive mobile drawer sidebar with icons, 404 & 403 pages |
@@ -902,31 +903,31 @@ Each phase ends with a working, tested milestone. Tasks are tracked with checkbo
 
 ---
 
-### Phase 3 — Backend Foundation ⬜
+### Phase 3 — Backend Foundation ✅
 
-> **Status: NOT STARTED** | **Deliverable:** Running API that the frontend can call.
+> **Status: DONE** | **Deliverable:** Running API that the frontend can call.
 
 #### 3.1 Server Setup
-- [ ] Create `server/` directory with Express + TypeScript
-- [ ] Configure `tsconfig.json` for server
-- [ ] Install dependencies: express, cors, dotenv, @prisma/client, prisma
-- [ ] Create `server.ts` entry point
-- [ ] Create `app.ts` with Express setup
+- [x] Create `server/` directory with Express + TypeScript
+- [x] Configure `tsconfig.json` for server
+- [x] Install dependencies: express, cors, dotenv, @prisma/client, prisma
+- [x] Create `server.ts` entry point
+- [x] Create `app.ts` with Express setup
 
 #### 3.2 Core Middleware
-- [ ] Add health-check route (`GET /api/v1/health`)
-- [ ] Configure environment variables (`.env` + `.env.example`)
-- [ ] Add centralized error handler middleware
-- [ ] Add request validation middleware (Zod)
-- [ ] Add structured logging (winston or pino)
-- [ ] Add API versioning (`/api/v1/`)
-- [ ] Add CORS configuration
-- [ ] Add request-size limits
+- [x] Add health-check route (`GET /api/v1/health`)
+- [x] Configure environment variables (`.env` + `.env.example`)
+- [x] Add centralized error handler middleware
+- [x] Add request validation middleware (Zod)
+- [x] Add structured logging (winston or pino)
+- [x] Add API versioning (`/api/v1/`)
+- [x] Add CORS configuration
+- [x] Add request-size limits
 
 #### 3.3 Project Config
-- [ ] Add `.gitignore` for server (node_modules, .env, dist, *.db)
-- [ ] Add `npm` scripts: `dev`, `build`, `start`, `db:studio`, `db:push`, `db:seed`
-- [ ] Add tsx for dev hot-reloading
+- [x] Add `.gitignore` for server (node_modules, .env, dist, *.db)
+- [x] Add `npm` scripts: `dev`, `build`, `start`, `db:studio`, `db:push`, `db:seed`
+- [x] Add tsx for dev hot-reloading
 
 ---
 
