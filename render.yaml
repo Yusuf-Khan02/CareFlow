@@ -7,7 +7,7 @@ services:
   # 1. CareFlow Express + Socket.IO Backend API
   - type: web
     name: careflow-api
-    env: node
+    runtime: node
     plan: free
     rootDir: server
     buildCommand: npm install --include=dev && npx prisma generate && npx prisma db push && npx prisma db seed && npm run build
@@ -32,11 +32,10 @@ services:
   # 2. CareFlow React SPA Frontend
   - type: web
     name: careflow-web
-    env: static
-    plan: free
+    runtime: static
     rootDir: CareFlowFrontend
     buildCommand: npm install && npm run build
-    staticPublishPath: dist
+    staticPublishPath: ./dist
     routes:
       - type: rewrite
         source: /*
