@@ -27,17 +27,25 @@ async function main() {
 
   console.log(`✅ Organization created: ${org.name}`);
 
-  // 2. Create Demo Role Users (Hashed with bcrypt: "CareFlow@2026")
+  // 2. Create Demo Role Users (Hashed with bcrypt: "CareFlow@2026" & "Admin@123")
   const defaultPasswordHash = await bcrypt.hash("CareFlow@2026", 10);
+  const admin123Hash = await bcrypt.hash("Admin@123", 10);
+  const doctor123Hash = await bcrypt.hash("Doctor@123", 10);
+  const nurse123Hash = await bcrypt.hash("Nurse@123", 10);
+  const pharm123Hash = await bcrypt.hash("Pharm@123", 10);
 
   const demoUsers = [
-    { email: "admin@careflow.demo", name: "Dr. Alexander Davis", role: "Admin" },
-    { email: "dr.sharma@careflow.demo", name: "Dr. Rahul Sharma", role: "Doctor" },
-    { email: "nurse.patel@careflow.demo", name: "Sister Priya Patel", role: "Nurse" },
-    { email: "reception@careflow.demo", name: "Ananya Roy", role: "Receptionist" },
-    { email: "lab@careflow.demo", name: "Vikram Sen", role: "LabTech" },
-    { email: "pharmacy@careflow.demo", name: "Sunil Joshi", role: "Pharmacist" },
-    { email: "patient@careflow.demo", name: "Rahul Sharma", role: "Patient" },
+    { email: "admin@careflow.demo", name: "Dr. Alexander Davis", role: "Admin", hash: defaultPasswordHash },
+    { email: "admin@careflow.com", name: "Dr. Alexander Davis", role: "Admin", hash: admin123Hash },
+    { email: "sarah.chen@careflow.com", name: "Dr. Sarah Chen", role: "Doctor", hash: doctor123Hash },
+    { email: "emily.watson@careflow.com", name: "Sister Emily Watson", role: "Nurse", hash: nurse123Hash },
+    { email: "david.kim@careflow.com", name: "David Kim", role: "Pharmacist", hash: pharm123Hash },
+    { email: "dr.sharma@careflow.demo", name: "Dr. Rahul Sharma", role: "Doctor", hash: defaultPasswordHash },
+    { email: "nurse.patel@careflow.demo", name: "Sister Priya Patel", role: "Nurse", hash: defaultPasswordHash },
+    { email: "reception@careflow.demo", name: "Ananya Roy", role: "Receptionist", hash: defaultPasswordHash },
+    { email: "lab@careflow.demo", name: "Vikram Sen", role: "LabTech", hash: defaultPasswordHash },
+    { email: "pharmacy@careflow.demo", name: "Sunil Joshi", role: "Pharmacist", hash: defaultPasswordHash },
+    { email: "patient@careflow.demo", name: "Rahul Sharma", role: "Patient", hash: defaultPasswordHash },
   ];
 
   const createdUsers: Record<string, string> = {};
@@ -46,14 +54,14 @@ async function main() {
     const user = await prisma.user.upsert({
       where: { email: u.email },
       update: {
-        passwordHash: defaultPasswordHash,
+        passwordHash: u.hash,
         role: u.role,
         name: u.name,
         status: "Active",
       },
       create: {
         email: u.email,
-        passwordHash: defaultPasswordHash,
+        passwordHash: u.hash,
         name: u.name,
         role: u.role,
         status: "Active",

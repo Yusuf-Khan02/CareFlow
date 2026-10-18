@@ -3,11 +3,22 @@
  * Connects to the Express + TypeScript REST API with intelligent offline/development fallback.
  */
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  (typeof window !== "undefined" && window.location.hostname === "localhost" && window.location.port === "5173"
-    ? "http://localhost:5000/api/v1"
-    : "/api/v1");
+export const getApiBaseUrl = (): string => {
+  if (typeof window !== "undefined") {
+    const custom = localStorage.getItem("careflow_custom_api_url");
+    if (custom) {
+      const clean = custom.trim().replace(/\/+$/, "");
+      return clean.endsWith("/api/v1") ? clean : `${clean}/api/v1`;
+    }
+  }
+
+  return (
+    import.meta.env.VITE_API_BASE_URL ||
+    (typeof window !== "undefined" && window.location.hostname === "localhost" && window.location.port === "5173"
+      ? "http://localhost:5000/api/v1"
+      : "/api/v1")
+  );
+};
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -48,7 +59,7 @@ export async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
-  const url = `${API_BASE_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
+  const url = `${getApiBaseUrl()}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
 
   const token = localStorage.getItem("careflow_token");
   const tenantId = localStorage.getItem("careflow_tenant_id");

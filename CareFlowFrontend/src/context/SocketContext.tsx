@@ -20,11 +20,20 @@ interface SocketContextType {
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
-const SOCKET_SERVER_URL =
-  import.meta.env.VITE_SOCKET_URL ||
-  (typeof window !== "undefined" && window.location.hostname === "localhost" && window.location.port === "5173"
-    ? "http://localhost:5000"
-    : "/");
+export const getSocketServerUrl = (): string => {
+  if (typeof window !== "undefined") {
+    const custom = localStorage.getItem("careflow_custom_api_url");
+    if (custom) {
+      return custom.trim().replace(/\/api\/v1\/?$/, "").replace(/\/+$/, "");
+    }
+  }
+  return (
+    import.meta.env.VITE_SOCKET_URL ||
+    (typeof window !== "undefined" && window.location.hostname === "localhost" && window.location.port === "5173"
+      ? "http://localhost:5000"
+      : "/")
+  );
+};
 
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { activeOrganization } = useTenant();
@@ -58,7 +67,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const token = localStorage.getItem("careflow_token");
     const tenantId = activeOrganization?.id || localStorage.getItem("careflow_tenant_id") || "org-careflow-central";
 
-    const newSocket = io(SOCKET_SERVER_URL, {
+    const newSocket = io(getSocketServerUrl(), {
       transports: ["websocket", "polling"],
       reconnection: true,
       reconnectionAttempts: Infinity,
@@ -75,7 +84,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     newSocket.on("connect", () => {
       setConnectionStatus("connected");
-      console.log(`[Socket.IO Client] Connected to ${SOCKET_SERVER_URL} (ID: ${newSocket.id})`);
+      console.log(`[Socket.IO Client] Connected to ${getSocketServerUrl()} (ID: ${newSocket.id})`);
 
       // If this was a reconnection, resynchronize application state!
       if (isReconnectingRef.current) {

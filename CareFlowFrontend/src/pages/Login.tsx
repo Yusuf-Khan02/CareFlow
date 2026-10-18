@@ -31,6 +31,10 @@ export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [selectedRole, setSelectedRole] = useState("Hospital Admin");
   const [isLoading, setIsLoading] = useState(false);
+  const [showApiConfig, setShowApiConfig] = useState(false);
+  const [customApiUrl, setCustomApiUrl] = useState(() => {
+    return typeof window !== "undefined" ? localStorage.getItem("careflow_custom_api_url") || "" : "";
+  });
 
   const fromLocation = (location.state as any)?.from?.pathname || "/dashboard";
 
@@ -55,7 +59,13 @@ export const Login = () => {
       showToast(`Welcome back! Session verified for ${selectedRole}.`, "success");
       navigate(fromLocation, { replace: true });
     } catch (err: any) {
-      showToast(err.message || "Authentication failed. Please verify your credentials.", "error");
+      const msg = err.message || "";
+      if (msg.includes("404") || msg.includes("Failed to communicate") || msg.includes("NETWORK_ERROR")) {
+        setShowApiConfig(true);
+        showToast("Backend not reached (404). Please paste your Render API URL in the connection box above.", "error", 6000);
+      } else {
+        showToast(msg || "Authentication failed. Please verify your credentials.", "error");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -161,6 +171,69 @@ export const Login = () => {
               </div>
             </div>
 
+            {showApiConfig && (
+              <div style={{
+                background: "#fef3c7",
+                border: "1px solid #f59e0b",
+                borderRadius: "8px",
+                padding: "12px 14px",
+                marginBottom: "16px",
+                fontSize: "13px",
+                color: "#92400e"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontWeight: 600, marginBottom: "6px" }}>
+                  <span>🔗 Link Render Backend URL</span>
+                  <button type="button" onClick={() => setShowApiConfig(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#92400e", fontSize: "14px" }}>✕</button>
+                </div>
+                <p style={{ margin: "0 0 8px 0", lineHeight: "1.4" }}>
+                  Paste your Render backend API URL (from Tab <code>careflow-api</code> in your dashboard) to link the frontend:
+                </p>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <input
+                    type="url"
+                    placeholder="https://careflow-api-xxxx.onrender.com"
+                    value={customApiUrl}
+                    onChange={(e) => setCustomApiUrl(e.target.value)}
+                    style={{
+                      flex: 1,
+                      padding: "8px 10px",
+                      borderRadius: "6px",
+                      border: "1px solid #d97706",
+                      fontSize: "12px",
+                      background: "#fff",
+                      color: "#1e293b",
+                      outline: "none"
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (customApiUrl.trim()) {
+                        localStorage.setItem("careflow_custom_api_url", customApiUrl.trim());
+                        showToast("Backend API URL saved! Ready to sign in.", "success");
+                        setShowApiConfig(false);
+                      } else {
+                        localStorage.removeItem("careflow_custom_api_url");
+                        showToast("Reset to default API URL.", "info");
+                      }
+                    }}
+                    style={{
+                      padding: "8px 14px",
+                      background: "#0f766e",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "6px",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      fontSize: "12px"
+                    }}
+                  >
+                    Save & Connect
+                  </button>
+                </div>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="login-form">
               {/* Email Field */}
               <div className="login-form-group form-group">
@@ -256,6 +329,23 @@ export const Login = () => {
               <p className="login-security-notice">
                 Protected healthcare operational portal. Unauthorized access is recorded in system audit logs.
               </p>
+              <div style={{ textAlign: "center", marginTop: "12px" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowApiConfig((prev) => !prev)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#0f766e",
+                    fontSize: "12px",
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                    fontWeight: 500
+                  }}
+                >
+                  ⚙️ {showApiConfig ? "Hide" : "Configure"} Backend API Connection
+                </button>
+              </div>
             </div>
           </div>
         </div>
