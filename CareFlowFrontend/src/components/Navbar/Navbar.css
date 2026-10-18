@@ -10,12 +10,16 @@
   top: 0;
   z-index: 100;
   box-shadow: var(--shadow-xs);
+  gap: 16px;
 }
 
 .navbar-left {
   display: flex;
   align-items: center;
   gap: 16px;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 
 .mobile-menu-btn {
@@ -28,6 +32,7 @@
   color: var(--text-secondary);
   background-color: var(--surface-hover);
   transition: all var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .mobile-menu-btn:hover {
@@ -38,6 +43,8 @@
 .navbar-headings {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .navbar-title {
@@ -45,18 +52,28 @@
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  line-height: 1.25;
 }
 
 .navbar-subtitle {
   font-size: 12px;
   color: var(--text-muted);
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
 }
 
 .navbar-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
+  flex-shrink: 0;
 }
 
 /* Hospital Facility Switcher */
@@ -69,6 +86,12 @@
   padding: 6px 12px;
   border-radius: var(--radius-md, 8px);
   transition: all var(--transition-fast, 0.2s ease);
+  flex-shrink: 0;
+  max-width: 250px;
+}
+
+.navbar-facility-switcher svg {
+  flex-shrink: 0;
 }
 
 .navbar-facility-switcher:hover {
@@ -85,7 +108,10 @@
   cursor: pointer;
   outline: none;
   font-family: inherit;
-  max-width: 220px;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .navbar-facility-select:focus {
@@ -528,15 +554,82 @@
   color: var(--danger-color);
 }
 
-/* Mobile Responsive */
+/* Tablet Responsive (<= 1024px) */
+@media (max-width: 1024px) {
+  .navbar {
+    padding: 0 20px;
+    height: 68px;
+    gap: 12px;
+  }
+
+  .navbar-status-pill .status-text {
+    display: none;
+  }
+
+  .navbar-status-pill {
+    padding: 8px;
+  }
+
+  .navbar-facility-switcher {
+    max-width: 200px;
+  }
+
+  .navbar-facility-select {
+    max-width: 160px;
+  }
+}
+
+/* Mobile Responsive (<= 768px) */
 @media (max-width: 768px) {
   .navbar {
-    padding: 0 16px;
-    height: 64px;
+    padding: 0 12px;
+    height: 60px;
+    gap: 8px;
   }
 
   .mobile-menu-btn {
     display: flex;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+
+  .navbar-left {
+    gap: 10px;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .navbar-headings {
+    min-width: 0;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .navbar-title {
+    font-size: 15px;
+    line-height: 1.2;
+  }
+
+  /* Hide redundant hospital subtitle on mobile to avoid 3-line overflow */
+  .navbar-subtitle {
+    display: none;
+  }
+
+  .navbar-right {
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .navbar-facility-switcher {
+    padding: 5px 8px;
+    gap: 5px;
+    max-width: 140px;
+  }
+
+  .navbar-facility-select {
+    max-width: 100px;
+    font-size: 12px;
   }
 
   .navbar-status-pill,
@@ -545,8 +638,97 @@
     display: none;
   }
 
+  .navbar-icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .user-profile-button {
+    padding: 0;
+  }
+
+  .user-avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
+  }
+
   .notif-panel {
-    width: calc(100vw - 32px);
-    right: -60px;
+    width: calc(100vw - 24px);
+    right: -50px;
+  }
+}
+
+/* Small Phones Responsive (<= 480px) */
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 10px;
+    height: 56px;
+    gap: 6px;
+  }
+
+  .navbar-left {
+    gap: 8px;
+  }
+
+  .navbar-title {
+    font-size: 14px;
+  }
+
+  .navbar-right {
+    gap: 6px;
+  }
+
+  .navbar-facility-switcher {
+    padding: 4px 6px;
+    gap: 4px;
+    max-width: 110px;
+  }
+
+  .navbar-facility-select {
+    max-width: 74px;
+    font-size: 11px;
+  }
+
+  .navbar-icon-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .notif-panel {
+    width: calc(100vw - 16px);
+    right: -42px;
+  }
+
+  .profile-menu {
+    width: 220px;
+    right: -4px;
+  }
+}
+
+/* Extra Small Phones (<= 360px) */
+@media (max-width: 360px) {
+  .navbar {
+    padding: 0 8px;
+    gap: 4px;
+  }
+
+  .navbar-title {
+    font-size: 13px;
+  }
+
+  .navbar-facility-switcher {
+    padding: 3px 4px;
+    max-width: 85px;
+  }
+
+  .navbar-facility-select {
+    max-width: 52px;
+    font-size: 10px;
   }
 }

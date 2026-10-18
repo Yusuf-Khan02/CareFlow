@@ -27,3 +27,18 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 640px) {
+  .dashboard {
+    gap: var(--spacing-md, 16px);
+  }
+
+  .dashboard-header h1 {
+    font-size: 22px;
+    letter-spacing: -0.02em;
+  }
+
+  .dashboard-header p {
+    font-size: 13px;
+  }
+}
