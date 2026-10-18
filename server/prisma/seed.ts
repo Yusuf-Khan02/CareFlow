@@ -38,6 +38,7 @@ async function main() {
     { email: "admin@careflow.demo", name: "Dr. Alexander Davis", role: "Admin", hash: defaultPasswordHash },
     { email: "admin@careflow.com", name: "Dr. Alexander Davis", role: "Admin", hash: admin123Hash },
     { email: "sarah.chen@careflow.com", name: "Dr. Sarah Chen", role: "Doctor", hash: doctor123Hash },
+    { email: "sara.chen@careflow.com", name: "Dr. Sarah Chen", role: "Doctor", hash: doctor123Hash },
     { email: "emily.watson@careflow.com", name: "Sister Emily Watson", role: "Nurse", hash: nurse123Hash },
     { email: "david.kim@careflow.com", name: "David Kim", role: "Pharmacist", hash: pharm123Hash },
     { email: "dr.sharma@careflow.demo", name: "Dr. Rahul Sharma", role: "Doctor", hash: defaultPasswordHash },

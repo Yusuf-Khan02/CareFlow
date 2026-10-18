@@ -38,6 +38,24 @@ export const Login = () => {
 
   const fromLocation = (location.state as any)?.from?.pathname || "/dashboard";
 
+  const handleEmailChange = (newEmail: string) => {
+    setEmail(newEmail);
+    const lower = newEmail.toLowerCase();
+    if (lower.includes("admin")) {
+      setSelectedRole("Hospital Admin");
+    } else if (lower.includes("sharma") || lower.includes("chen") || lower.includes("doctor")) {
+      setSelectedRole("Senior Doctor");
+    } else if (lower.includes("nurse") || lower.includes("patel") || lower.includes("watson")) {
+      setSelectedRole("Head Nurse");
+    } else if (lower.includes("reception") || lower.includes("roy")) {
+      setSelectedRole("Receptionist");
+    } else if (lower.includes("lab") || lower.includes("sen")) {
+      setSelectedRole("Lab Tech");
+    } else if (lower.includes("pharm") || lower.includes("joshi") || lower.includes("kim")) {
+      setSelectedRole("Pharmacist");
+    }
+  };
+
   const handleRoleSelect = (role: DemoRole) => {
     setSelectedRole(role.role);
     setEmail(role.email);
@@ -251,7 +269,7 @@ export const Login = () => {
                     className="login-form-input form-input"
                     placeholder="doctor@hospital.org"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => handleEmailChange(e.target.value)}
                     required
                   />
                 </div>
