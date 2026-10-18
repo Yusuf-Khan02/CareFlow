@@ -78,9 +78,12 @@ export const Login = () => {
       navigate(fromLocation, { replace: true });
     } catch (err: any) {
       const msg = err.message || "";
-      if (msg.includes("404") || msg.includes("Failed to communicate") || msg.includes("NETWORK_ERROR")) {
+      if (msg.includes("404") || msg.includes("Failed to communicate") || msg.includes("NETWORK_ERROR") || msg.includes("Route not registered")) {
+        if (typeof window !== "undefined" && localStorage.getItem("careflow_custom_api_url")) {
+          localStorage.removeItem("careflow_custom_api_url");
+        }
         setShowApiConfig(true);
-        showToast("Backend not reached (404). Please paste your Render API URL in the connection box above.", "error", 6000);
+        showToast("Backend connection refreshed. Please try signing in again.", "info", 5000);
       } else {
         showToast(msg || "Authentication failed. Please verify your credentials.", "error");
       }

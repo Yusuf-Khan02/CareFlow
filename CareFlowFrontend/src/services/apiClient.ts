@@ -4,20 +4,32 @@
  */
 
 export const getApiBaseUrl = (): string => {
+  let base = "";
+
   if (typeof window !== "undefined") {
     const custom = localStorage.getItem("careflow_custom_api_url");
-    if (custom) {
-      const clean = custom.trim().replace(/\/+$/, "");
-      return clean.endsWith("/api/v1") ? clean : `${clean}/api/v1`;
+    if (custom && custom.trim()) {
+      base = custom.trim();
     }
   }
 
-  return (
-    import.meta.env.VITE_API_BASE_URL ||
-    (typeof window !== "undefined" && window.location.hostname === "localhost" && window.location.port === "5173"
-      ? "http://localhost:5000/api/v1"
-      : "/api/v1")
-  );
+  if (!base) {
+    base =
+      import.meta.env.VITE_API_BASE_URL ||
+      (typeof window !== "undefined" && window.location.hostname === "localhost" && window.location.port === "5173"
+        ? "http://localhost:5000/api/v1"
+        : "/api/v1");
+  }
+
+  // Strip any trailing slashes
+  const clean = base.replace(/\/+$/, "");
+
+  // If URL doesn't include /api/ (e.g. was entered as https://host.onrender.com), append /api/v1
+  if (!clean.includes("/api/") && !clean.endsWith("/api")) {
+    return `${clean}/api/v1`;
+  }
+
+  return clean;
 };
 
 export interface ApiResponse<T> {
@@ -59,7 +71,9 @@ export async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
-  const url = `${getApiBaseUrl()}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
+  const base = getApiBaseUrl().replace(/\/+$/, "");
+  const cleanEndpoint = endpoint.replace(/^\/+/, "");
+  const url = `${base}/${cleanEndpoint}`;
 
   const token = localStorage.getItem("careflow_token");
   const tenantId = localStorage.getItem("careflow_tenant_id");

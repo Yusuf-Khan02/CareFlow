@@ -3,6 +3,7 @@ import { useTenant } from "../context/TenantContext";
 import { fileService } from "../services/fileService";
 import { aiService } from "../services/aiService";
 import { patientService } from "../services/patientService";
+import { getApiBaseUrl } from "../services/apiClient";
 import type {
   MedicalFile,
   FileStorageMetrics,
@@ -205,7 +206,7 @@ export const MedicalFiles: React.FC = () => {
     setPreviewLoading(true);
     try {
       const signed = await fileService.getSignedUrl(file.id);
-      const fullUrl = `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1"}/files/download/${signed.token}`;
+      const fullUrl = `${getApiBaseUrl()}/files/download/${signed.token}`;
       setPreviewSignedUrl(fullUrl);
     } catch (err: any) {
       showToast(err.message || "Could not generate preview token", "error");

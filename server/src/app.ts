@@ -58,6 +58,20 @@ export const createApp = (): express.Application => {
   app.use(requestLogger);
   app.use(tenantMiddleware);
 
+  // 3.5. URL Normalization Middleware (Fixes double slashes and missing /api/v1 prefixes)
+  app.use((req, _res, next) => {
+    // Collapse any leading or internal double slashes: e.g. //auth/login -> /auth/login
+    if (req.url.includes("//")) {
+      req.url = req.url.replace(/\/+/g, "/");
+    }
+    // Transparently support routes called without /api/v1 prefix (e.g. /auth/login -> /api/v1/auth/login)
+    const prefix = ENV.API_PREFIX; // "/api/v1"
+    if (!req.url.startsWith(prefix) && req.url !== "/" && !req.url.startsWith("/socket.io")) {
+      req.url = `${prefix}${req.url.startsWith("/") ? "" : "/"}${req.url}`;
+    }
+    next();
+  });
+
   // 4. Base Routes
   app.get("/", (_req, res) => {
     res.json({

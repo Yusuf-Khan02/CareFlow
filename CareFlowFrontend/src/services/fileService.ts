@@ -3,10 +3,8 @@
  * HIPAA-compliant private document vault operations
  */
 
-import { apiRequest } from "./apiClient.js";
+import { apiRequest, getApiBaseUrl } from "./apiClient.js";
 import type { MedicalFile, FileStorageMetrics } from "../types/index.js";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1";
 
 export interface ListFilesParams {
   patientId?: number;
@@ -96,7 +94,7 @@ export const fileService = {
    * Download file using signed token
    */
   async downloadWithToken(token: string, originalName: string, inNewTab: boolean = false): Promise<void> {
-    const downloadUrl = `${API_BASE_URL}/files/download/${token}`;
+    const downloadUrl = `${getApiBaseUrl()}/files/download/${token}`;
     if (inNewTab) {
       window.open(downloadUrl, "_blank");
       return;
