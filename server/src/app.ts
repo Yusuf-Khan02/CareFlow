@@ -35,6 +35,8 @@ export const createApp = (): express.Application => {
         if (
           ENV.NODE_ENV === "development" ||
           origin === ENV.CORS_ORIGIN ||
+          origin.endsWith(".onrender.com") ||
+          origin.endsWith(".vercel.app") ||
           origin === "http://localhost:5173" ||
           origin === "http://localhost:3000"
         ) {

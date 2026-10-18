@@ -20,7 +20,20 @@ export interface SocketUser {
 export const initSocketServer = (httpServer: HTTPServer): SocketIOServer => {
   io = new SocketIOServer(httpServer, {
     cors: {
-      origin: [ENV.CORS_ORIGIN, "http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173"],
+      origin: (requestOrigin, callback) => {
+        if (!requestOrigin) return callback(null, true);
+        if (
+          ENV.NODE_ENV === "development" ||
+          requestOrigin === ENV.CORS_ORIGIN ||
+          requestOrigin.endsWith(".onrender.com") ||
+          requestOrigin.endsWith(".vercel.app") ||
+          requestOrigin === "http://localhost:5173" ||
+          requestOrigin === "http://localhost:3000"
+        ) {
+          return callback(null, true);
+        }
+        return callback(null, false);
+      },
       credentials: true,
       methods: ["GET", "POST", "PATCH", "DELETE"],
     },
